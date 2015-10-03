@@ -1,0 +1,13 @@
+1. Mozeme pouzivat three.js [implementuje vykreslovanie objektov
+    eg. SphereGeometry, illumination eg. Phongov model, celkovo taktiez object
+    Sphere(center, radius) s metodami intersect(), distanceToPoint(),
+    translate()..] ???
+
+2. Pohybovatelna kamera??
+3. Scene: 2d space with N spheres composed into one moving and rotating
+  rigid body... CO TO ZNAMENA??
+
+  3.1 During simulation show force, linear velocity and acceleration vectors.
+    To akoze nad objektami sa budu zobrazovat ich vlastnosti??
+
+4. Ako sa ma aplikovat ta sila?? ako ked tagom buchneme do gule?
