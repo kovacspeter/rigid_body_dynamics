@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="">
+
+		<link rel="icon" href="../images/favicon.ico">
+
+		<title>Rigid Body Dynamics and Inertia Tensors</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<link href="css/style.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="index.php">Rigid Body Dynamics and Inertia Tensors</a>
+        </div>
+				<!--
+        <div id="navbar" class="collapse navbar-collapse">
+					<ul class="nav navbar-nav pull-right">
+						<li><a href="sources.php">Zdroje & TechnolĂłgie</a></li>
+						<li><a href="vychodiska_bakalarskej_prace.pdf">VĂ˝chodiskĂˇ bakalĂˇrskej prĂˇce</a></li>
+            <li><a href="prezentacia_navrh_prace.pdf">PrezentĂˇcia nĂˇvrhu prĂˇce</a></li>
+            <li><a href="bakalarska_praca_vodila.pdf">Text zĂˇvereÄŤnej prĂˇce</a></li>
+					</ul>
+        </div>
+				-->
+      </div>
+    </nav>
+		<div id="page">
+			<div class="container">
+
+				<h1>Project description</h1>
+				<div class="well">
+					<ul>
+						<li>Scene: 2d space with N spheres composed into one moving and rotating rigid body</li>
+						<li>Implement object definition
+							<ul>
+								<li>either read each sphere position and radius from text file</li>
+								<li>or implement user interface to create spheres (position and radius) by clicking on canvas</li>
+							</ul>
+						</li>
+						<li>Implement !!!3D!!! rigid body dynamics (render 2D)
+							<ul>
+								<li>Position p(t) and orientation q(t) (using quaternion) ◦ Linear v(t) and angular ω(t) velocity</li>
+								<li>Linear a(t) and angular α(t) acceleration</li>
+								<li>Scalar mass M and Inertia tensor J(t)</li>
+
+								<li>Linear P(t) and angular L(t) momentum</li>
+								<li>Applying force f(t) and torque τ(t) on body</li>
+								<li>Integrate motion equation (ODE) using simple explicit Euler</li>
+							</ul>
+						</li>
+						<li>Implement Mass, Inertia tensor and Center of Mass
+							<ul>
+								<li>Define material density as parameter</li>
+								<li>Calculate mass and volume of each sphere</li>
+								<li>Calculate body center of mass as weighted (mass) average of sphere centers</li>
+								<li>Calculate Inertia tensor of each sphere (separate) and use “offset” theorem to move them into center of mass. Total inertia is then sum of all offset inertia</li>
+							</ul>
+						</li>
+						<li>Implement user interaction
+							<ul>
+								<li>User can apply force on body by clicking and dragging. Define start of force vector (button press) and end of force vector (button release). Body should start moving and rotating w.r.t to point where to force was applied.</li>
+								<li>During simulation show force, linear velocity and acceleration vectors.</li>
+								<li>Restrict body position to be only inside visible area (window). Mirror linear velocity</li>
+								<li>User can change density during simulation (mass and inertia must be recalculated)</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+
+				<h2>Diary</h2>
+				<div class="well">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">Created web page for project</h3>
+						</div>
+						<div class="panel-body">
+							Added project description, diary and workspace setup.
+						</div>
+						<div class="panel-footer"><i class="glyphicon glyphicon-calendar"></i>03.10.2015</div>
+					</div>
+				</div>
+      </div>
+    </div>
+	</body>
+</html>
