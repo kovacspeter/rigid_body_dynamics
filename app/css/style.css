@@ -9,6 +9,8 @@ body {
 
 .container {
 	width: 992px !important;
+	margin-top: -50px;
+	padding-top: 50px;
 }
 
 #menu {
@@ -21,6 +23,4 @@ canvas {
 	max-width: 100%;
 	max-height: 100%;
 	margin: 0;
-	margin-top: -50px;
-	padding-top: 50px;
 }
