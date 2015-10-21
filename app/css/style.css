@@ -11,6 +11,11 @@ body {
 	width: 992px !important;
 }
 
+#menu {
+  position: relative;
+  z-index: 10;
+}
+
 canvas {
 	display: block;
 	max-width: 100%;

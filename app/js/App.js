@@ -21,6 +21,5 @@ App.prototype.createButton = function(where, text, id, func){
   });
 
   where.append(button);
-  where.on("click", "button#" + id, func);
-
+  button.click(func);
 }
