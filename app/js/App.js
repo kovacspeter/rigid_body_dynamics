@@ -12,17 +12,7 @@ function App(canvasElement, menu) {
 App.prototype.initControls = function(where) {
 
   this.createButton(where, 'Create Sphere', 'createSphere', function() {
-
-    console.log(this);
-    this.canvasElement.click(function(evt) {
-      var x = evt.pageX - this.canvasElement.offset().left
-      var y = evt.pageY - this.canvasElement.offset().top
-      //TODO radius prompt by sa hodilo prerobit na nieco take ze bude tahat
-      //  kurzor po canvase a bude sa mu roztahova kruh od bodu kde klikol
-      this.canvas.createSphere(new Position(x, y, 0), prompt('Specify radius'));
-      this.canvasElement.unbind();
-    }.bind(this));
-
+    this.canvas.action = "createSphere";
   }.bind(this));
 };
 
