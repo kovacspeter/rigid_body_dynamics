@@ -24,43 +24,51 @@ function Canvas(canvasElement) {
   this.context = this.canvasElement[0].getContext("2d");
 }
 
-Canvas.prototype.createSphere = function (position, radius) {
-  this.objects.push(new Sphere(position, radius));
+Canvas.prototype.createSphere = function (evt) {
+  var x = evt.pageX - this.canvasElement.offset().left
+  var y = evt.pageY - this.canvasElement.offset().top
+  //TODO radius prompt by sa hodilo prerobit na nieco take ze bude tahat
+  //  kurzor po canvase a bude sa mu roztahova kruh od bodu kde klikol
+  this.objects.push(new Sphere(new Position(x, y, 0), prompt('Specify radius')));
 };
 
-Canvas.prototype.moveObject = function (obj) {
+Canvas.prototype.moveObject = function (evt) {
   // body...
+};
+
+Canvas.prototype.applyForce = function (evt) {
+  // body...
+};
+
+Canvas.prototype.deleteSphere = function (evt) {
+  var x = evt.pageX - this.canvasElement.offset().left
+  var y = evt.pageY - this.canvasElement.offset().top
+  var pos = new Position(x,y,0);
+  for (i in this.objects) {
+    if (this.objects[i].isInSphere(pos)) {
+       this.objects.splice(i, 1);
+       break;
+    }
+  }
 };
 
 Canvas.prototype.act = function (evt) {
   switch (this.action) {
 
     case "createSphere":
-      var x = evt.pageX - this.canvasElement.offset().left
-      var y = evt.pageY - this.canvasElement.offset().top
-      //TODO radius prompt by sa hodilo prerobit na nieco take ze bude tahat
-      //  kurzor po canvase a bude sa mu roztahova kruh od bodu kde klikol
-      this.createSphere(new Position(x, y, 0), prompt('Specify radius'));
+      this.createSphere(evt);
       break;
 
     case "moveSphere":
-      //TODO
+      this.moveSphere(evt);
       break;
 
     case "deleteSphere":
-      var x = evt.pageX - this.canvasElement.offset().left
-      var y = evt.pageY - this.canvasElement.offset().top
-      var pos = new Position(x,y,0);
-      for (i in this.objects) {
-        if (this.objects[i].isInSphere(pos)) {
-           this.objects.splice(i, 1);
-           break;
-        }
-      }
+      this.deleteSphere(evt);
       break;
 
     case "applyForce":
-      //TODO
+      this.applyForce(evt);
       break;
 
     default:
@@ -78,6 +86,7 @@ Canvas.prototype.initClickListener = function () {
 };
 
 Canvas.prototype.render = function () {
+  console.log(this.objects);
   this.context.clearRect(0, 0, this.canvasElement[0].width, this.canvasElement[0].height);
   for (var i = 0; i < this.objects.length; i++) {
       drawCircle(this.context, this.objects[i].position, this.objects[i].radius, 'black');
