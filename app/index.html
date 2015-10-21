@@ -5,6 +5,7 @@
 		<meta name="description" content="">
 
 		<link rel="icon" href="../images/favicon.ico">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
 		<script src="js/Position.js"></script>
 		<script src="js/Sphere.js"></script>
 		<script src="js/Rigid_body.js"></script>
@@ -16,7 +17,7 @@
 		<link href="css/style.css" rel="stylesheet">
   </head>
 
-  <body onload="init('space');">
+  <body onload="init('space', 'menu');">
 		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container">
         <div class="navbar-header">
@@ -33,6 +34,8 @@
     </nav>
 		<div id="page">
 			<div class="container">
+				<div id="menu">
+				</div>
 				<canvas id="space"></canvas>
       </div>
     </div>
