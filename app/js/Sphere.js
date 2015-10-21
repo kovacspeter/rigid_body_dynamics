@@ -6,3 +6,7 @@ function Sphere(position, radius) {
 Sphere.prototype.setPosition = function (position) {
   this.position = position;
 }
+
+Sphere.prototype.isInSphere = function(pos) {
+  return this.radius - this.position.distance(pos) >= 0;
+}
