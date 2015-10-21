@@ -35,6 +35,7 @@ Canvas.prototype.moveObject = function (obj) {
 
 Canvas.prototype.act = function (evt) {
   switch (this.action) {
+
     case "createSphere":
       var x = evt.pageX - this.canvasElement.offset().left
       var y = evt.pageY - this.canvasElement.offset().top
@@ -43,8 +44,21 @@ Canvas.prototype.act = function (evt) {
       this.createSphere(new Position(x, y, 0), prompt('Specify radius'));
       this.action = false;
       break;
-    default:
 
+    case "moveSphere":
+    //TODO
+    break;
+
+    case "deleteSphere":
+    //TODO
+    break;
+
+    case "applyForce":
+    //TODO
+    break;
+
+    default:
+    //TODO
   };
 };
 
