@@ -32,7 +32,7 @@ Canvas.prototype.createSphere = function (evt) {
   this.objects.push(new Sphere(new Position(x, y, 0), prompt('Specify radius')));
 };
 
-Canvas.prototype.moveObject = function (evt) {
+Canvas.prototype.moveSphere = function (evt) {
   // body...
 };
 
@@ -79,16 +79,16 @@ Canvas.prototype.act = function (evt) {
   this.render();
 };
 
-Canvas.prototype.initClickListener = function () {
-  this.canvasElement.click(function(evt){
-    this.act(evt);
-  }.bind(this));
-};
-
 Canvas.prototype.render = function () {
   console.log(this.objects);
   this.context.clearRect(0, 0, this.canvasElement[0].width, this.canvasElement[0].height);
   for (var i = 0; i < this.objects.length; i++) {
       drawCircle(this.context, this.objects[i].position, this.objects[i].radius, 'black');
   }
+};
+
+Canvas.prototype.initClickListener = function () {
+  this.canvasElement.click(function(evt){
+    this.act(evt);
+  }.bind(this));
 };
