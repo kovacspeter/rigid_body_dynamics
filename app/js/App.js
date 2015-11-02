@@ -1,5 +1,5 @@
 function init(canvas, menu) {
-  new App($('#' + canvas), $('#' + menu))
+  new App($('#' + canvas), $('#' + menu));
 };
 
 function App(canvasElement, menu) {
@@ -7,6 +7,9 @@ function App(canvasElement, menu) {
   this.canvasElement = canvasElement;
   this.canvas = new Canvas(canvasElement);
   this.control = this.initControls(this.menu);
+	this.lastTimerTick = Date.now();
+	
+	this.run();
 };
 
 App.prototype.initControls = function(where) {
@@ -37,4 +40,14 @@ App.prototype.createButton = function(where, text, id, func){
 
   where.append(button);
   return button;
-}
+};
+
+App.prototype.run = function() {
+	var nowTimerTick = Date.now();
+	for (var i=0; i < this.canvas.objects.length; i++) {
+		this.canvas.objects[i].move(nowTimerTick - this.lastTimerTick);
+	}
+	this.lastTimerTick = nowTimerTick;
+	this.canvas.render();
+	window.requestAnimationFrame(this.run.bind(this));
+};
