@@ -1,9 +1,10 @@
 function Sphere(position, radius) {
   this.position = position;
   this.radius = radius;
+	this.m = 1;								//Hmotnosť gule
 	this.speed = {
-		x: 0.5,
-		y: 0.5
+		x: Math.sqrt(2)/2 /2,
+		y: Math.sqrt(2)/2 /2
 	};
 }
 
@@ -25,6 +26,11 @@ Sphere.prototype.move = function(dt) {
 	else if (this.position.y > Canvas.SIZE.HEIGHT - this.radius){
 		this.speed.y = -Math.abs(this.speed.y);
 	}
+};
+
+Sphere.prototype.accelerate = function(ax, ay) {
+	this.speed.x += ax;
+	this.speed.y += ay;
 };
 
 Sphere.prototype.setPosition = function (position) {

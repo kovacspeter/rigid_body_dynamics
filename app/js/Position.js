@@ -11,9 +11,9 @@ Position.prototype.move = function(x, y, z) {
 };
 
 Position.prototype.equals = function(pos) {
-  return (pos.x - this.x + pos.y - this.y + pos.z - this.z) == 0;
+  return (pos.x - this.x + pos.y - this.y + pos.z - this.z) === 0;
 };
 
 Position.prototype.distance = function (pos) {
-  return Math.abs(pos.x - this.x) + Math.abs(pos.y - this.y) + Math.abs(pos.z - this.z)
+  return Math.sqrt(Math.pow((pos.x - this.x), 2) + Math.pow((pos.y - this.y), 2) + Math.pow((pos.z - this.z), 2));
 };
