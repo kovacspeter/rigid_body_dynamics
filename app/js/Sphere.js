@@ -2,7 +2,7 @@ function Sphere(position, radius) {
   this.position = position;
   this.radius = radius;
 	this.mass = 1;								//Hmotnosť gule
-	this.speed = {
+	this.velocity = {
 		x: Math.sqrt(2)/2 /2,
 		y: Math.sqrt(2)/2 /2
 	};
@@ -15,27 +15,27 @@ Sphere.RESISTANCE = 0.999;
 Sphere.prototype.move = function(dt) {
 	//dt je casovy zlomok medzi poslednymi dvoma tiknutiami casovaca
 
-  this.speed.x = Sphere.RESISTANCE * this.speed.x;
-  this.speed.y = Sphere.RESISTANCE * this.speed.y;
-	this.position.move(this.speed.x * dt, this.speed.y * dt, 0);
+  this.velocity.x = Sphere.RESISTANCE * this.velocity.x;
+  this.velocity.y = Sphere.RESISTANCE * this.velocity.y;
+	this.position.move(this.velocity.x * dt, this.velocity.y * dt, 0);
 	if (this.position.x < this.radius) {
-		this.speed.x = Math.abs(this.speed.x);
+		this.velocity.x = Math.abs(this.velocity.x);
 	}
 	else if (this.position.x > Canvas.SIZE.WIDTH - this.radius){
-		this.speed.x = -Math.abs(this.speed.x);
+		this.velocity.x = -Math.abs(this.velocity.x);
 	}
 
 	if (this.position.y < this.radius) {
-		this.speed.y = Math.abs(this.speed.y);
+		this.velocity.y = Math.abs(this.velocity.y);
 	}
 	else if (this.position.y > Canvas.SIZE.HEIGHT - this.radius){
-		this.speed.y = -Math.abs(this.speed.y);
+		this.velocity.y = -Math.abs(this.velocity.y);
 	}
 };
 
 Sphere.prototype.accelerate = function(ax, ay) {
-	this.speed.x += ax;
-	this.speed.y += ay;
+	this.velocity.x += ax;
+	this.velocity.y += ay;
 };
 
 Sphere.prototype.setPosition = function (position) {

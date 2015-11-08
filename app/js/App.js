@@ -1,14 +1,14 @@
-function init(canvas, menu) {
-  new App($('#' + canvas), $('#' + menu));
+function init(canvasID, menuID, inspectorID) {
+  new App($('#' + canvasID), $('#' + menuID), $('#' + inspectorID));
 };
 
-function App(canvasElement, menu) {
-  this.menu = menu;
-  this.canvasElement = canvasElement;
-  this.canvas = new Canvas(canvasElement);
+function App($canvasElement, $menu, $inspector) {
+  this.menu = $menu;
+  this.canvasElement = $canvasElement;
+  this.canvas = new Canvas($canvasElement);
   this.control = this.initControls(this.menu);
 	this.lastTimerTick = Date.now();
-
+	this.objectInspector = new Inspector($inspector);
 	this.run();
 };
 
@@ -74,7 +74,7 @@ App.prototype.run = function() {
   	// 	object1.position.move(nx*k/2, ny*k/2, 0);
   	// 	object2.position.move(-nx*k/2, -ny*k/2, 0);
     //
-  	// 	k = -2 * ((object1.speed.x - object2.speed.x) * nx + (object1.speed.y - object2.speed.y) * ny) /
+  	// 	k = -2 * ((object1.velocity.x - object2.velocity.x) * nx + (object1.velocity.y - object2.velocity.y) * ny) /
     //    (1/object1.mass + 1/object2.mass);
   	// 	object1.accelerate(k*nx/object1.mass, k*ny/object1.mass);
   	// 	object2.accelerate(-k*nx/object2.mass, -k*ny/object2.mass);

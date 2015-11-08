@@ -11,6 +11,7 @@
 		<script src="js/RigidBody.js"></script>
 		<script src="js/canvasHelper.js"></script>
 		<script src="js/canvas.js"></script>
+		<script src="js/ObjectInspector.js"></script>
 		<script src="js/App.js"></script>
 
 		<title>Rigid Body Dynamics and Inertia Tensors</title>
@@ -18,7 +19,7 @@
 		<link href="css/style.css" rel="stylesheet">
   </head>
 
-  <body onload="init('space', 'menu');">
+  <body onload="init('space', 'menu', 'inspector');">
 		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container">
         <div class="navbar-header">
@@ -35,9 +36,739 @@
     </nav>
 		<div id="page">
 			<div class="container">
-				<div id="menu">
+				<div class="row">
+					<div class="col-xs-9">
+						<div id="menu"></div>
+					</div>
 				</div>
-				<canvas id="space" width="800" height="600"></canvas>
+				<div class="row">
+					<div class="col-xs-9">
+						<canvas id="space" width="800" height="600"></canvas>
+					</div>
+					<div class="col-xs-3">
+						<div id="inspector">
+							<ul class="inspector-container">
+								<li>
+									<a href="#" class="toggleSection">Rigid Body 1</a>
+									<div class="rigidBody-container">
+										<span class="sectionHeader"><i class="glyphicon glyphicon-info-sign"> Properties</i></span>
+										<div class="rigidBody-properties-container">
+											<div class="property">
+												<span class="label">Center position:</span>
+												<div class="container-fluid">
+													<div class="row">
+														<div class="col-xs-6">
+															<div class="input-group">
+																<span class="input-group-addon" id="basic-addon1">X</span>
+																<input type="text" class="form-control" value="10">
+															</div>
+														</div>
+														<div class="col-xs-6">
+															<div class="input-group">
+																<span class="input-group-addon" id="basic-addon1">Y</span>
+																<input type="text" class="form-control" value="10">
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="property">
+												<div class="container-fluid">
+													<div class="row">
+														<div class="col-xs-6">
+															<span class="label">Inertia:</span>
+															<div class="input-group">
+																<span class="input-group-addon" id="basic-addon1">I</span>
+																<input type="text" class="form-control" value="10">
+															</div>
+														</div>
+														<div class="col-xs-6">
+															<span class="label">Mass:</span>
+															<div class="input-group">
+																<span class="input-group-addon" id="basic-addon1">m</span>
+																<input type="text" class="form-control" value="10">
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<span class="sectionHeader"><i class="glyphicon glyphicon-folder-open"> Spheres</i></span>
+										<ul class="rigidBody-spheres-container">
+											<li>
+												<a href="#" class="toggleSection sphereHeader">Sphere 1</a>
+												<div class="sphere-container">
+													<div class="property">
+														<span class="label">Position:</span>
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">X</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">Y</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="property">
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<span class="label">Radius:</span>
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">r</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<span class="label">Mass:</span>
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">m</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="property">
+														<span class="label">Velocity:</span>
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">X</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">Y</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</li>
+											<li>
+												<a href="#" class="toggleSection sphereHeader">Sphere 1</a>
+												<div class="sphere-container">
+													<div class="property">
+														<span class="label">Position:</span>
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">X</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">Y</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="property">
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<span class="label">Radius:</span>
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">r</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<span class="label">Mass:</span>
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">m</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="property">
+														<span class="label">Velocity:</span>
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">X</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">Y</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</li>
+											<li>
+												<a href="#" class="toggleSection sphereHeader">Sphere 1</a>
+												<div class="sphere-container">
+													<div class="property">
+														<span class="label">Position:</span>
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">X</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">Y</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="property">
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<span class="label">Radius:</span>
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">r</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<span class="label">Mass:</span>
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">m</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="property">
+														<span class="label">Velocity:</span>
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">X</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">Y</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</li>
+										</ul>
+									</div> 
+								</li>
+								<li>
+									<a href="#" class="toggleSection">Rigid Body 1</a>
+									<div class="rigidBody-container">
+										<span class="sectionHeader"><i class="glyphicon glyphicon-info-sign"> Properties</i></span>
+										<div class="rigidBody-properties-container">
+											<div class="property">
+												<span class="label">Center position:</span>
+												<div class="container-fluid">
+													<div class="row">
+														<div class="col-xs-6">
+															<div class="input-group">
+																<span class="input-group-addon" id="basic-addon1">X</span>
+																<input type="text" class="form-control" value="10">
+															</div>
+														</div>
+														<div class="col-xs-6">
+															<div class="input-group">
+																<span class="input-group-addon" id="basic-addon1">Y</span>
+																<input type="text" class="form-control" value="10">
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="property">
+												<div class="container-fluid">
+													<div class="row">
+														<div class="col-xs-6">
+															<span class="label">Inertia:</span>
+															<div class="input-group">
+																<span class="input-group-addon" id="basic-addon1">I</span>
+																<input type="text" class="form-control" value="10">
+															</div>
+														</div>
+														<div class="col-xs-6">
+															<span class="label">Mass:</span>
+															<div class="input-group">
+																<span class="input-group-addon" id="basic-addon1">m</span>
+																<input type="text" class="form-control" value="10">
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<span class="sectionHeader"><i class="glyphicon glyphicon-folder-open"> Spheres</i></span>
+										<ul class="rigidBody-spheres-container">
+											<li>
+												<a href="#" class="toggleSection sphereHeader">Sphere 1</a>
+												<div class="sphere-container">
+													<div class="property">
+														<span class="label">Position:</span>
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">X</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">Y</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="property">
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<span class="label">Radius:</span>
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">r</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<span class="label">Mass:</span>
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">m</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="property">
+														<span class="label">Velocity:</span>
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">X</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">Y</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</li>
+											<li>
+												<a href="#" class="toggleSection sphereHeader">Sphere 1</a>
+												<div class="sphere-container">
+													<div class="property">
+														<span class="label">Position:</span>
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">X</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">Y</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="property">
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<span class="label">Radius:</span>
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">r</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<span class="label">Mass:</span>
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">m</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="property">
+														<span class="label">Velocity:</span>
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">X</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">Y</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</li>
+											<li>
+												<a href="#" class="toggleSection sphereHeader">Sphere 1</a>
+												<div class="sphere-container">
+													<div class="property">
+														<span class="label">Position:</span>
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">X</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">Y</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="property">
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<span class="label">Radius:</span>
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">r</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<span class="label">Mass:</span>
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">m</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="property">
+														<span class="label">Velocity:</span>
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">X</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">Y</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</li>
+										</ul>
+									</div> 
+								</li>
+								<li>
+									<a href="#" class="toggleSection">Rigid Body 1</a>
+									<div class="rigidBody-container">
+										<span class="sectionHeader"><i class="glyphicon glyphicon-info-sign"> Properties</i></span>
+										<div class="rigidBody-properties-container">
+											<div class="property">
+												<span class="label">Center position:</span>
+												<div class="container-fluid">
+													<div class="row">
+														<div class="col-xs-6">
+															<div class="input-group">
+																<span class="input-group-addon" id="basic-addon1">X</span>
+																<input type="text" class="form-control" value="10">
+															</div>
+														</div>
+														<div class="col-xs-6">
+															<div class="input-group">
+																<span class="input-group-addon" id="basic-addon1">Y</span>
+																<input type="text" class="form-control" value="10">
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="property">
+												<div class="container-fluid">
+													<div class="row">
+														<div class="col-xs-6">
+															<span class="label">Inertia:</span>
+															<div class="input-group">
+																<span class="input-group-addon" id="basic-addon1">I</span>
+																<input type="text" class="form-control" value="10">
+															</div>
+														</div>
+														<div class="col-xs-6">
+															<span class="label">Mass:</span>
+															<div class="input-group">
+																<span class="input-group-addon" id="basic-addon1">m</span>
+																<input type="text" class="form-control" value="10">
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<span class="sectionHeader"><i class="glyphicon glyphicon-folder-open"> Spheres</i></span>
+										<ul class="rigidBody-spheres-container">
+											<li>
+												<a href="#" class="toggleSection sphereHeader">Sphere 1</a>
+												<div class="sphere-container">
+													<div class="property">
+														<span class="label">Position:</span>
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">X</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">Y</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="property">
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<span class="label">Radius:</span>
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">r</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<span class="label">Mass:</span>
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">m</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="property">
+														<span class="label">Velocity:</span>
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">X</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">Y</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</li>
+											<li>
+												<a href="#" class="toggleSection sphereHeader">Sphere 1</a>
+												<div class="sphere-container">
+													<div class="property">
+														<span class="label">Position:</span>
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">X</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">Y</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="property">
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<span class="label">Radius:</span>
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">r</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<span class="label">Mass:</span>
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">m</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="property">
+														<span class="label">Velocity:</span>
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">X</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">Y</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</li>
+											<li>
+												<a href="#" class="toggleSection sphereHeader">Sphere 1</a>
+												<div class="sphere-container">
+													<div class="property">
+														<span class="label">Position:</span>
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">X</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">Y</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="property">
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<span class="label">Radius:</span>
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">r</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<span class="label">Mass:</span>
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">m</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="property">
+														<span class="label">Velocity:</span>
+														<div class="container-fluid">
+															<div class="row">
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">X</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+																<div class="col-xs-6">
+																	<div class="input-group">
+																		<span class="input-group-addon" id="basic-addon1">Y</span>
+																		<input type="text" class="form-control" value="10">
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</li>
+										</ul>
+									</div> 
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
       </div>
     </div>
 	</body>

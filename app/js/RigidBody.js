@@ -60,7 +60,7 @@ RigidBody.prototype.checkCollision = function(rigid_body) {
     		sphere1.position.move(nx*k/2, ny*k/2, 0);
     		sphere2.position.move(-nx*k/2, -ny*k/2, 0);
 
-    		k = -2 * ((sphere1.speed.x - sphere2.speed.x) * nx + (sphere1.speed.y - sphere2.speed.y) * ny) /
+    		k = -2 * ((sphere1.velocity.x - sphere2.velocity.x) * nx + (sphere1.velocity.y - sphere2.velocity.y) * ny) /
          (1/sphere1.mass + 1/sphere2.mass);
     		sphere1.accelerate(k*nx/sphere1.mass, k*ny/sphere1.mass);
     		sphere2.accelerate(-k*nx/sphere2.mass, -k*ny/sphere2.mass);
