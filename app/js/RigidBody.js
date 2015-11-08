@@ -1,5 +1,5 @@
 function RigidBody(sphere) {//TODO
-  this.mass = 0;
+  this.mass = 1;
   this.spheres = [sphere];
   this.position;
   this.inertia;
@@ -7,10 +7,11 @@ function RigidBody(sphere) {//TODO
   //... TODO
 };
 
-RigidBody.prototype.join = function (rigidBody) {
+RigidBody.prototype.join = function (rigid_body) {
   for (sphere in rigid_body.spheres) {
-    rigid_body.spheres[sphere].rigidBody = this;
-    this.spheres.push(rigidBody.spheres[sphere]);
+    sphere = rigid_body.spheres[sphere];
+    this.spheres.push(sphere);
+    sphere.rigidBody = this;
   }
   this.update();
 };
@@ -34,14 +35,45 @@ RigidBody.prototype.draw = function(context, color) {
 RigidBody.prototype.updateMass = function() {
   this.mass = 0;
   for (sphere in this.spheres) {
-    this.mass += rigid_body.spheres[sphere].mass;
+    this.mass += this.spheres[sphere].mass;
   }
 };
+
+RigidBody.prototype.updateSpeed = function() {
+  var speedx = 0;
+  var speedy = 0;
+  for (sphere in this.spheres) {
+    speedx += this.spheres[sphere].speed.x;
+    speedy += this.spheres[sphere].speed.y;
+  }
+  var averagex = speedx / this.spheres.length;
+  var averagey = speedy / this.spheres.length;
+  for (sphere in this.spheres) {
+    this.spheres[sphere].speed.x = averagex;
+    this.spheres[sphere].speed.y = averagey;
+  }
+}
 
 RigidBody.prototype.update = function() {
   this.updateMass();
   this.updateCenterOfMass;
 };
+
+RigidBody.prototype.isCollision = function(rigid_body) {
+  for (var i in this.spheres) {
+    sphere1 = this.spheres[i];
+    for (var j in rigid_body.spheres) {
+      sphere2 = rigid_body.spheres[j];
+      var dx = sphere1.position.x - sphere2.position.x;
+      var dy = sphere1.position.y - sphere2.position.y;
+      var dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist <= (sphere1.getRadius() + sphere2.getRadius())) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
 
 RigidBody.prototype.checkCollision = function(rigid_body) {
   for (var i=0; i < this.spheres.length; i++) {

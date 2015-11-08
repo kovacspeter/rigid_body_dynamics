@@ -36,13 +36,17 @@ Canvas.prototype.crateRigidBody = function (evt) {
 	var x = evt.pageX - this.canvasElement.offset().left;
 	var y = evt.pageY - this.canvasElement.offset().top;
 	var sphere = new Sphere(new Position(x, y, 0), Sphere.DEFAULT_RADIUS);
-	this.objects.push(new RigidBody(sphere));
-	//TODO check ci sa nepretina s inym RB
-};
-
-Canvas.prototype.getRigidBody = function() {
-	//TODO treba to asi prepisat tak aby createSphere bolo iba createRigidBody a
-	//	celkovo aby canvas narabal iba s ridgid bodies ??
+	var rb = new RigidBody(sphere);
+	var isCollision = false;
+	for (o in this.objects) {
+		if (this.objects[o].isCollision(rb)) {
+			this.objects[o].join(rb);
+			isCollision = true;
+		}
+	}
+	if (!isCollision) {
+		this.objects.push(rb);
+	}
 };
 
 Canvas.prototype.moveRigidBody = function (evt) {
@@ -54,6 +58,7 @@ Canvas.prototype.applyForce = function (evt) {
 };
 
 Canvas.prototype.deleteRigidBody = function (evt) {
+	//TODO prerobit aktualne nefunguje
 	var x = evt.pageX - this.canvasElement.offset().left
 	var y = evt.pageY - this.canvasElement.offset().top
 	var pos = new Position(x, y, 0);
@@ -85,7 +90,7 @@ Canvas.prototype.act = function (evt) {
 			break;
 
 		default:
-			//TODO
+			//TODO ??
 	};
 
 	this.state = null;
