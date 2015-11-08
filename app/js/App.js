@@ -1,14 +1,14 @@
-function init(canvas, menu) {
-  new App($('#' + canvas), $('#' + menu));
+function init(canvasID, menuID, inspectorID) {
+  new App($('#' + canvasID), $('#' + menuID), $('#' + inspectorID));
 };
 
-function App(canvasElement, menu) {
-  this.menu = menu;
-  this.canvasElement = canvasElement;
-  this.canvas = new Canvas(canvasElement);
+function App($canvasElement, $menu, $inspector) {
+  this.menu = $menu;
+  this.canvasElement = $canvasElement;
+  this.canvas = new Canvas($canvasElement);
   this.control = this.initControls(this.menu);
 	this.lastTimerTick = Date.now();
-
+	this.objectInspector = new Inspector($inspector);
 	this.run();
 };
 
@@ -59,7 +59,6 @@ App.prototype.run = function() {
         rbd1.checkCollision(rbd2);
   		}
   	}
-    
   	this.canvas.render();
   } else {
     this.lastTimerTick = Date.now();
