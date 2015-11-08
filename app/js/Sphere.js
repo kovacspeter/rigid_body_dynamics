@@ -3,8 +3,8 @@ function Sphere(position, radius) {
   this.radius = radius;
 	this.mass = 1;								//Hmotnosť gule
 	this.velocity = {
-		x: Math.sqrt(2)/2 /2,
-		y: Math.sqrt(2)/2 /2
+		x: 0,
+		y: 0
 	};
   this.rigidBody = null;
 }
@@ -15,8 +15,8 @@ Sphere.RESISTANCE = 0.999;
 Sphere.prototype.move = function(dt) {
 	//dt je casovy zlomok medzi poslednymi dvoma tiknutiami casovaca
 
-  this.velocity.x = Sphere.RESISTANCE * this.velocity.x;
-  this.velocity.y = Sphere.RESISTANCE * this.velocity.y;
+  // this.velocity.x = Sphere.RESISTANCE * this.velocity.x;
+  // this.velocity.y = Sphere.RESISTANCE * this.velocity.y;
 	this.position.move(this.velocity.x * dt, this.velocity.y * dt, 0);
 	if (this.position.x < this.radius) {
 		this.velocity.x = Math.abs(this.velocity.x);

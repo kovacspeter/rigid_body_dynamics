@@ -54,7 +54,15 @@ Canvas.prototype.moveRigidBody = function (evt) {
 };
 
 Canvas.prototype.applyForce = function (evt) {
-	// body...
+	var x = evt.pageX - this.canvasElement.offset().left
+	var y = evt.pageY - this.canvasElement.offset().top
+	var point = new Position(x, y, 0);
+	for (i in this.objects) {
+		var sphere = this.objects[i].getSphere(point)
+		if (sphere != null) {
+			this.objects[i].applyForce(sphere, 1, 1);
+		}
+	}
 };
 
 Canvas.prototype.deleteRigidBody = function (evt) {

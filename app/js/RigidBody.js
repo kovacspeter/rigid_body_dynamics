@@ -1,9 +1,15 @@
 function RigidBody(sphere) {//TODO
   this.mass = 1;
+  this.centerOfMass = sphere.position;
   this.spheres = [sphere];
+  this.quaternion;
   this.position;
+  this.linearMomentum;
+  this.angularMomentum;
   this.inertia;
   this.inertiaInv;
+  this.force;
+  this.torque;
   //... TODO
 };
 
@@ -101,4 +107,18 @@ RigidBody.prototype.checkCollision = function(rigid_body) {
     }
   }
   // this.update()
+}
+
+RigidBody.prototype.getSphere = function(point) {
+  for (var sphere in this.spheres) {
+    if (this.spheres[sphere].isInSphere(point)) {
+			return this.spheres[sphere];
+		}
+  }
+  return null;
+}
+
+RigidBody.prototype.applyForce = function(sphere, x, y) {
+  sphere.accelerate(x, y);
+  this.update();
 }
