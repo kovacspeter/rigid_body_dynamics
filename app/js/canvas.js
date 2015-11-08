@@ -12,14 +12,14 @@ function Canvas(canvasElement) {
 
 Canvas.STATES = {
   NONE: 0,
-  CREATING_SPHERE: 1,
-  MOVING_SPHERE: 2,
+  CREATING_RIGIDBODY: 1,
+  MOVING_RIGIDBODY: 2,
   APPLYING_FORCE: 3,
-  DELETING_SPHERE: 4
+  DELETING_RIGIDBODY: 4
 };
 Canvas.SIZE = {WIDTH: 800, HEIGHT: 600};
 
-Canvas.prototype.createSphere = function (evt) {
+Canvas.prototype.crateRigidBody = function (evt) {
 	// if (Canvas.state === Canvas.STATES.CREATING_SPHERE) {
 	// 	var x = evt.pageX - this.canvasElement.offset().left;
 	// 	var y = evt.pageY - this.canvasElement.offset().top;
@@ -32,12 +32,20 @@ Canvas.prototype.createSphere = function (evt) {
 	// 	this.objects.push(new Sphere(new Position(x, y, 0), Sphere.DEFAULT_RADIUS));
 	// 	this.state = Canvas.STATES.CREATING_SPHERE;
 	// } TODO nevime na co je toto ak to nemas ty k niecomu tak to odstran
+
 	var x = evt.pageX - this.canvasElement.offset().left;
 	var y = evt.pageY - this.canvasElement.offset().top;
-	this.objects.push(new Sphere(new Position(x, y, 0), Sphere.DEFAULT_RADIUS));
+	var sphere = new Sphere(new Position(x, y, 0), Sphere.DEFAULT_RADIUS);
+	this.objects.push(new RigidBody(sphere));
+	//TODO check ci sa nepretina s inym RB
 };
 
-Canvas.prototype.moveSphere = function (evt) {
+Canvas.prototype.getRigidBody = function() {
+	//TODO treba to asi prepisat tak aby createSphere bolo iba createRigidBody a
+	//	celkovo aby canvas narabal iba s ridgid bodies ??
+};
+
+Canvas.prototype.moveRigidBody = function (evt) {
 	// body...
 };
 
@@ -45,7 +53,7 @@ Canvas.prototype.applyForce = function (evt) {
 	// body...
 };
 
-Canvas.prototype.deleteSphere = function (evt) {
+Canvas.prototype.deleteRigidBody = function (evt) {
 	var x = evt.pageX - this.canvasElement.offset().left
 	var y = evt.pageY - this.canvasElement.offset().top
 	var pos = new Position(x, y, 0);
@@ -60,16 +68,16 @@ Canvas.prototype.deleteSphere = function (evt) {
 Canvas.prototype.act = function (evt) {
 	switch (this.state) {
 
-		case Canvas.STATES.CREATING_SPHERE:
-			this.createSphere(evt);
+		case Canvas.STATES.CREATING_RIGIDBODY:
+			this.crateRigidBody(evt);
 			break;
 
-		case Canvas.STATES.MOVING_SPHERE:
-			this.moveSphere(evt);
+		case Canvas.STATES.MOVING_RIGIDBODY:
+			this.moveRigidBody(evt);
 			break;
 
-		case Canvas.STATES.DELETING_SPHERE:
-			this.deleteSphere(evt);
+		case Canvas.STATES.DELETING_RIGIDBODY:
+			this.deleteRigidBody(evt);
 			break;
 
 		case Canvas.STATES.APPLYING_FORCE:
@@ -86,7 +94,7 @@ Canvas.prototype.act = function (evt) {
 Canvas.prototype.render = function () {
 	this.context.clearRect(0, 0, this.canvasElement[0].width, this.canvasElement[0].height);
 	for (var i = 0; i < this.objects.length; i++) {
-		drawCircle(this.context, this.objects[i].position, this.objects[i].radius, 'black');
+		this.objects[i].draw(this.context, 'black');
 	}
 };
 
@@ -97,8 +105,8 @@ Canvas.prototype.initMouseListeners = function () {
 
 	this.canvasElement.mousemove(function (evt) {
 		//this.act(evt);
-		if (Canvas.state === Canvas.STATES.CREATING_SPHERE) {
-			this.createSphere(evt);
+		if (Canvas.state === Canvas.STATES.CREATING_RIGIDBODY) {
+			this.createRigidBody(evt);
 		}
 	}.bind(this));
 

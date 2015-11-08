@@ -6,12 +6,17 @@ function Sphere(position, radius) {
 		x: Math.sqrt(2)/2 /2,
 		y: Math.sqrt(2)/2 /2
 	};
+  this.rigidBody = null;
 }
 
 Sphere.DEFAULT_RADIUS = 10;
+Sphere.RESISTANCE = 0.999;
 
 Sphere.prototype.move = function(dt) {
 	//dt je casovy zlomok medzi poslednymi dvoma tiknutiami casovaca
+
+  this.speed.x = Sphere.RESISTANCE * this.speed.x;
+  this.speed.y = Sphere.RESISTANCE * this.speed.y;
 	this.position.move(this.speed.x * dt, this.speed.y * dt, 0);
 	if (this.position.x < this.radius) {
 		this.speed.x = Math.abs(this.speed.x);
@@ -53,4 +58,8 @@ Sphere.prototype.getRadius = function() {
 
 Sphere.prototype.isInSphere = function(pos) {
   return this.radius - this.position.distance(pos) >= 0;
+};
+
+Sphere.prototype.draw = function(context, color) {
+  drawCircle(context, this.position, this.radius, color)
 };
