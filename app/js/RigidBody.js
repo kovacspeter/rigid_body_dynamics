@@ -1,15 +1,19 @@
 function RigidBody(sphere) {//TODO
   this.mass = 1;
-  this.centerOfMass = sphere.position;
   this.spheres = [sphere];
   this.quaternion;
-  this.position;
+  this.position = sphere.position;
+  this.rotation;
   this.linearMomentum;
   this.angularMomentum;
   this.inertia;
   this.inertiaInv;
-  this.force;
-  this.torque;
+  this.force = {
+    x: 0,
+    y: 0,
+    z: 0
+  };
+  this.torque = 0;
   //... TODO
 };
 
@@ -19,7 +23,8 @@ RigidBody.prototype.join = function (rigid_body) {
     this.spheres.push(sphere);
     sphere.rigidBody = this;
   }
-  this.update();
+  this.updateCenterOfMass();
+  this.updateMass();
 };
 
 RigidBody.prototype.move = function(dt) {
@@ -36,34 +41,13 @@ RigidBody.prototype.draw = function(context, color) {
   for (sphere in this.spheres) {
     this.spheres[sphere].draw(context, color);
   }
-}
+};
 
 RigidBody.prototype.updateMass = function() {
   this.mass = 0;
   for (sphere in this.spheres) {
     this.mass += this.spheres[sphere].mass;
   }
-};
-
-RigidBody.prototype.updateVelocity = function() {
-  var velocityx = 0;
-  var velocityy = 0;
-  for (sphere in this.spheres) {
-    velocityx += this.spheres[sphere].velocity.x;
-    velocityy += this.spheres[sphere].velocity.y;
-  }
-  var averagex = velocityx / this.spheres.length;
-  var averagey = velocityy / this.spheres.length;
-  for (sphere in this.spheres) {
-    this.spheres[sphere].velocity.x = averagex;
-    this.spheres[sphere].velocity.y = averagey;
-  }
-}
-
-RigidBody.prototype.update = function() {
-  this.updateVelocity();
-  this.updateMass();
-  this.updateCenterOfMass;
 };
 
 RigidBody.prototype.isCollision = function(rigid_body) {
@@ -80,7 +64,7 @@ RigidBody.prototype.isCollision = function(rigid_body) {
     }
   }
   return false;
-}
+};
 
 RigidBody.prototype.checkCollision = function(rigid_body) {
   for (var i=0; i < this.spheres.length; i++) {
@@ -106,8 +90,7 @@ RigidBody.prototype.checkCollision = function(rigid_body) {
       }
     }
   }
-  // this.update()
-}
+};
 
 RigidBody.prototype.getSphere = function(point) {
   for (var sphere in this.spheres) {
@@ -118,7 +101,6 @@ RigidBody.prototype.getSphere = function(point) {
   return null;
 }
 
-RigidBody.prototype.applyForce = function(sphere, x, y) {
-  sphere.accelerate(x, y);
-  this.update();
+RigidBody.prototype.applyForce = function(sphere, x, y, z) {
+  sphere.applyForce(x,y,z);
 }

@@ -47,19 +47,8 @@ App.prototype.createButton = function(where, text, id, func){
 App.prototype.run = function() {
   if (this.canvas.state == null) {
   	var nowTimerTick = Date.now();
-  	for (var i=0; i < this.canvas.objects.length; i++) {
-  		this.canvas.objects[i].move(nowTimerTick - this.lastTimerTick);
-  	}
+    this.canvas.render(nowTimerTick - this.lastTimerTick);
   	this.lastTimerTick = nowTimerTick;
-
-  	for (var i=0; i < this.canvas.objects.length; i++) {
-      rbd1 = this.canvas.objects[i];
-  		for (var j=i+1; j < this.canvas.objects.length; j++) {
-        rbd2 = this.canvas.objects[j];
-        rbd1.checkCollision(rbd2);
-  		}
-  	}
-  	this.canvas.render();
   } else {
     this.lastTimerTick = Date.now();
   }

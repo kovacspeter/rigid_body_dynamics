@@ -1,6 +1,6 @@
 function drawCircle(context, position, radius, color) {
 	context.beginPath();
-	context.arc(position.x, position.y, radius, 0, 2 * Math.PI);
+	context.arc(position[0], position[1], radius, 0, 2 * Math.PI);
 	context.fillStyle = color;
 	context.fill();
 	context.stroke();

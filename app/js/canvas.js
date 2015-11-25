@@ -18,33 +18,22 @@ Canvas.STATES = {
   DELETING_RIGIDBODY: 4
 };
 Canvas.SIZE = {WIDTH: 800, HEIGHT: 600};
+Canvas.NUM_STEPS = 1;
 
 Canvas.prototype.crateRigidBody = function (evt) {
-	// if (Canvas.state === Canvas.STATES.CREATING_SPHERE) {
-	// 	var x = evt.pageX - this.canvasElement.offset().left;
-	// 	var y = evt.pageY - this.canvasElement.offset().top;
-	// 	var newPosition = new Position(x, y, 0);
-	// 	var radius = newPosition.distance(this.objects[this.objects.length-1].getPosition());
-	// 	this.objects[this.objects.length-1].setRadius(radius);
-	// } else {
-	// 	var x = evt.pageX - this.canvasElement.offset().left;
-	// 	var y = evt.pageY - this.canvasElement.offset().top;
-	// 	this.objects.push(new Sphere(new Position(x, y, 0), Sphere.DEFAULT_RADIUS));
-	// 	this.state = Canvas.STATES.CREATING_SPHERE;
-	// } TODO nevime na co je toto ak to nemas ty k niecomu tak to odstran
-
 	var x = evt.pageX - this.canvasElement.offset().left;
 	var y = evt.pageY - this.canvasElement.offset().top;
-	var sphere = new Sphere(new Position(x, y, 0), Sphere.DEFAULT_RADIUS);
-	var rb = new RigidBody(sphere);
-	var isCollision = false;
+	var particle = new Particle();
+	particle.setSphere(10, 1, [x, y, 0], numeric.identity(3));
+	var rb = new RB(particle);
+	var isOverlap = false;
 	for (o in this.objects) {
-		if (this.objects[o].isCollision(rb)) {
+		if (this.objects[o].isOverlap(rb)) {
 			this.objects[o].join(rb);
-			isCollision = true;
+			isOverlap = true;
 		}
 	}
-	if (!isCollision) {
+	if (!isOverlap) {
 		this.objects.push(rb);
 	}
 };
@@ -56,11 +45,11 @@ Canvas.prototype.moveRigidBody = function (evt) {
 Canvas.prototype.applyForce = function (evt) {
 	var x = evt.pageX - this.canvasElement.offset().left
 	var y = evt.pageY - this.canvasElement.offset().top
-	var point = new Position(x, y, 0);
 	for (i in this.objects) {
-		var sphere = this.objects[i].getSphere(point)
-		if (sphere != null) {
-			this.objects[i].applyForce(sphere, 1, 1);
+		var particle = this.objects[i].getParticle(x, y, 0);
+		if (particle != null) {
+			// particle.applyForce([0.05, 0.05, 0]);
+			this.objects[i].applyForce([0.05, 0.05, 0]);
 		}
 	}
 };
@@ -104,10 +93,18 @@ Canvas.prototype.act = function (evt) {
 	this.state = null;
 };
 
-Canvas.prototype.render = function () {
-	this.context.clearRect(0, 0, this.canvasElement[0].width, this.canvasElement[0].height);
-	for (var i = 0; i < this.objects.length; i++) {
-		this.objects[i].draw(this.context, 'black');
+Canvas.prototype.render = function (dt) {
+
+	var dt2 = dt / Canvas.NUM_STEPS;
+	for (var j = 0; j < Canvas.NUM_STEPS; j++) {
+		for (var o in this.objects) {
+			var obj = this.objects[o];
+			obj.update(dt2);
+		} //TODO collision here
+		this.context.clearRect(0, 0, this.canvasElement[0].width, this.canvasElement[0].height);
+		for (var i = 0; i < this.objects.length; i++) {
+			this.objects[i].draw(this.context, 'black');
+		}
 	}
 };
 

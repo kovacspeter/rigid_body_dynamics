@@ -4,7 +4,8 @@ function Sphere(position, radius) {
 	this.mass = 1;								//Hmotnosť gule
 	this.velocity = {
 		x: 0,
-		y: 0
+		y: 0,
+    z: 0
 	};
   this.rigidBody = null;
 }
@@ -12,11 +13,17 @@ function Sphere(position, radius) {
 Sphere.DEFAULT_RADIUS = 10;
 Sphere.RESISTANCE = 0.999;
 
+Sphere.prototype.applyForce = function(x, y, z) {
+  var vx = x / this.mass;
+  var vy = y / this.mass;
+  var vz = z / this.mass;
+
+  this.accelerate(vx, vy, vz);
+}
+
 Sphere.prototype.move = function(dt) {
 	//dt je casovy zlomok medzi poslednymi dvoma tiknutiami casovaca
 
-  // this.velocity.x = Sphere.RESISTANCE * this.velocity.x;
-  // this.velocity.y = Sphere.RESISTANCE * this.velocity.y;
 	this.position.move(this.velocity.x * dt, this.velocity.y * dt, 0);
 	if (this.position.x < this.radius) {
 		this.velocity.x = Math.abs(this.velocity.x);
@@ -33,9 +40,10 @@ Sphere.prototype.move = function(dt) {
 	}
 };
 
-Sphere.prototype.accelerate = function(ax, ay) {
+Sphere.prototype.accelerate = function(ax, ay, az) {
 	this.velocity.x += ax;
 	this.velocity.y += ay;
+  this.velocity.z += az;
 };
 
 Sphere.prototype.setPosition = function (position) {
