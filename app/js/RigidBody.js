@@ -1,4 +1,5 @@
 function RigidBody(sphere) {//TODO
+	this.ID = id;
   this.mass = 1;
   this.spheres = [sphere];
   this.quaternion;

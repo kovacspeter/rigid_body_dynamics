@@ -52,5 +52,7 @@ App.prototype.run = function() {
   } else {
     this.lastTimerTick = Date.now();
   }
+	this.objectInspector.refresh(this.canvas.objects);
+	
 	window.requestAnimationFrame(this.run.bind(this));
 };

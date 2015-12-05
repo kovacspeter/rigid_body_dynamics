@@ -144,12 +144,12 @@ canvas {
 	padding: 10px 0;
 }
 
-#inspector .rigidBody-spheres-container {
+#inspector .rigidBody-particles-container {
 	background: rgb(42,54,66);
 	padding: 10px;
 }
 
-#inspector .rigidBody-spheres-container > li:first-child > .sphereHeader {
+#inspector .rigidBody-particles-container > li:first-child > a {
 	margin-top: 0;
 }
 
