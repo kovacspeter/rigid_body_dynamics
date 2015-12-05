@@ -177,7 +177,13 @@ RB.prototype.computeCollisions = function() {
     //   particle.P[1] = 0;
     // }
   }
-}
+};
+
+RB.prototype.draw = function(context, color) {
+  for (p in this.particles) {
+    this.particles[p].draw(context, color);
+  }
+};
 
 RB.prototype.updateCenterOfMass = function() {
   var pos = [0, 0, 0];
@@ -257,11 +263,9 @@ RB.prototype.getCrossMatrix = function(vec) {
     [-vec[1], vec[0], 0]
   ];
   return vecx;
-}
-RB.prototype.draw = function(context, color) {
-  for (p in this.particles) {
-    this.particles[p].draw(context, color);
-  }
+};
+RB.prototype.getMass = function() {
+	return this.mass;
 };
 RB.prototype.getParticle = function(x, y, z) {
   for (var p in this.particles) {
@@ -271,6 +275,9 @@ RB.prototype.getParticle = function(x, y, z) {
     }
   }
   return null;
+};
+RB.prototype.getPosition = function() {
+	return this.x;
 };
 
 RB.prototype.join = function(rb) {

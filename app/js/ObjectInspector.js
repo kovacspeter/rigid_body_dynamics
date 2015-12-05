@@ -71,7 +71,7 @@ Inspector.prototype.addParticleContainer = function(i, j) {
 							$('<div></div>').addClass('input-group').append(
 								$('<span></span>').addClass('input-group-addon').text('r')
 							).append(
-								$('<input type="text" />').addClass('form-control inertia')
+								$('<input type="text" />').addClass('form-control radius')
 							)
 						)
 					).append(
@@ -190,13 +190,31 @@ Inspector.prototype.refresh = function(objects){
 		if ($bodyContainer.length === 0) {
 			$bodyContainer = this.addBodyContainer(i);
 		}
+		this.updateBodyValues(object, $bodyContainer);
+		
 		for (var j in object.particles) {
 			var particle = object.particles[j];
 			var $particleContainer = $bodyContainer.find('#particle-container-'+i+'-'+j);
 			if ($particleContainer.length === 0) {
-				console.log("HERE");
 				$particleContainer = this.addParticleContainer(i, j);
 			}
+			this.updateParticleValues(particle, $particleContainer);
 		}
 	}
+};
+
+Inspector.prototype.updateBodyValues = function(object, $bodyContainer) {
+	$bodyContainer.find('.rigidBody-properties-container').find('input.position-x').val(object.getPosition()[0]);
+	$bodyContainer.find('.rigidBody-properties-container').find('input.position-y').val(object.getPosition()[1]);
+	$bodyContainer.find('.rigidBody-properties-container').find('input.inertia').val('...');
+	$bodyContainer.find('.rigidBody-properties-container').find('input.mass').val(object.getMass());
+};
+
+Inspector.prototype.updateParticleValues = function(particle, $particleContainer) {
+	$particleContainer.find('input.position-x').val(particle.getPosition()[0]);
+	$particleContainer.find('input.position-y').val(particle.getPosition()[1]);
+	$particleContainer.find('input.radius').val(particle.getRadius());
+	$particleContainer.find('input.mass').val(particle.getMass());
+	$particleContainer.find('input.velocity-x').val(particle.getVelocity()[0]);
+	$particleContainer.find('input.velocity-y').val(particle.getVelocity()[1]);
 };

@@ -53,7 +53,19 @@ Particle.prototype.getCrossMatrix = function(vec) {
     [-vec[1], vec[0], 0]
   ];
   return vecx;
-}
+};
+Particle.prototype.getMass = function() {
+	return this.mass;
+};
+Particle.prototype.getPosition = function() {
+	return this.x;
+};
+Particle.prototype.getRadius = function() {
+	return this.r;
+};
+Particle.prototype.getVelocity = function() {
+	return this.v;
+};
 
 Particle.prototype.normalize = function(v) {
   var l = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
