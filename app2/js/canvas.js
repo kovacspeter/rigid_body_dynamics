@@ -39,7 +39,7 @@ Canvas.prototype.createParticle = function (evt) {
 		particleRadius = 100;
 	}
 	var particle = new Particle();
-	particle.setSphere(particleRadius, [this.mouseButtonClickCoords.x, this.mouseButtonClickCoords.y, 0], numeric.identity(3));
+	particle.setSphere(10, [this.mouseButtonClickCoords.x, this.mouseButtonClickCoords.y, 0], numeric.identity(3));
 	return particle;
 };
 Canvas.prototype.crateRigidBody = function (evt) {

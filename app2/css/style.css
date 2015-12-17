@@ -1,0 +1,233 @@
+html body {
+	background: #1C2129;
+	height: 100%;
+	margin: 0;
+	width: 100%;
+}
+body {
+	padding-top: 50px;
+}
+
+.container {
+	width: 1110px !important;
+	margin-top: -50px;
+	padding-top: 50px;
+}
+
+ul {
+	display: block;
+	margin: 0;
+	padding: 0;
+}
+
+a {
+	-webkit-transition: color 200ms; /* Safari */
+	transition: color 200ms;
+}
+a:focus {
+	outline: none;
+	text-decoration: none;
+}
+
+#menu {
+	margin-bottom: 50px;
+  position: relative;
+  z-index: 10;
+}
+
+canvas {
+	background: #fff;
+	display: block;
+	max-width: 100%;
+	max-height: 100%;
+	margin: 0;
+	border-radius: 8px;
+	box-shadow: inset 0px 0px 9px 1px rgba(0,0,0,1);
+}
+
+#inspector {
+	color: #eee;
+	border-radius: 6px;
+	max-height: 600px;
+	margin-right: -15px;
+	overflow: auto;
+}
+#inspector a:hover {
+	text-decoration: none;
+}
+#inspector a.toggleSection:after {
+	content: '';
+	display: inline-block;
+	margin-left: 10px;
+	position: relative;
+	top: -1px;
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 5px 5px 0 5px;
+	border-color: #fff transparent transparent transparent;
+}
+#inspector li.active > a.toggleSection:after {
+	border-width: 0 5px 5px 5px;
+	border-color: transparent transparent #fff transparent;
+}
+#inspector ul {
+	list-style: none;
+}
+#inspector ul li {
+	margin: 0 0 1px;
+	padding: 0;
+}
+
+#inspector .inspector-container > li > a.toggleSection {
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#425a6c+0,364657+100 */
+	background: #425a6c; /* Old browsers */
+	background: -moz-linear-gradient(top,  #425a6c 0%, #364657 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#425a6c), color-stop(100%,#364657)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #425a6c 0%,#364657 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #425a6c 0%,#364657 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #425a6c 0%,#364657 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #425a6c 0%,#364657 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#425a6c', endColorstr='#364657',GradientType=0 ); /* IE6-9 */
+
+	color: #cdcdcd;
+	display: block;
+	padding: 5px 10px;
+	-webkit-transition: color 200ms, background 200ms; /* Safari */
+	transition: color 200ms, background 200ms;
+}
+
+#inspector .inspector-container > li > a.toggleSection:after {
+	border-top-color:#cdcdcd; 
+}
+
+#inspector .inspector-container > li > a:hover, #inspector .inspector-container > li.active > a {
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#364657+0,425a6c+100 */
+	background: #364657; /* Old browsers */
+	background: -moz-linear-gradient(top,  #364657 0%, #425a6c 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#364657), color-stop(100%,#425a6c)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #364657 0%,#425a6c 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #364657 0%,#425a6c 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #364657 0%,#425a6c 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #364657 0%,#425a6c 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#364657', endColorstr='#425a6c',GradientType=0 ); /* IE6-9 */
+
+	color: #eee;
+}
+#inspector .inspector-container > li > a:hover:after {
+	border-top-color: #eee;
+}
+#inspector .inspector-container > li.active > a:after {
+	border-bottom-color: #eee;
+}
+
+#inspector .rigidBody-container {
+	background: rgb(35,49,62);
+}
+
+#inspector .rigidBody-container > li > a {
+	color: rgb(149,149,149);
+	display: inline-block;
+	margin: 5px 10px;
+}
+
+#inspector .rigidBody-container > li > a.toggleSection:after, #inspector .rigidBody-container > li > a.toggleSection:hover:after {
+	border-top-color: rgb(149,149,149);
+}
+
+#inspector .rigidBody-container > li.active > a.toggleSection:after {
+	border-bottom-color: rgb(149,149,149);
+}
+
+#inspector .rigidBody-properties-container {
+	background: rgb(42,54,66);
+	padding: 10px 0;
+}
+
+#inspector .rigidBody-particles-container {
+	background: rgb(42,54,66);
+	padding: 10px;
+}
+
+#inspector .rigidBody-particles-container > li:first-child > a {
+	margin-top: 0;
+}
+
+#inspector .sphere-container {
+	box-shadow: rgba(0, 0, 0, 0.8) 0px 0px 1px 0px inset;
+	margin: 0px 10px;
+	padding: 10px 0px;
+	background: rgb(37, 49, 61);
+	-webkit-border-bottom-right-radius: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	-moz-border-radius-bottomright: 5px;
+	-moz-border-radius-bottomleft: 5px;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+#inspector .sphereHeader {
+	background: rgb(42,54,66);
+	color: #eee;
+	display: block;
+	text-align: center;
+	padding: 5px;
+	margin: 20px 10px 0;
+	box-shadow: inset 0px 0px 1px 0px rgba(0,0,0,0.8);
+}
+
+#inspector .active > .sphereHeader, #inspector .sphereHeader:hover {
+	background: rgb(37,49,61);
+	color: #fff;
+	box-shadow: inset 0px 1px 1px 0px rgba(0,0,0,0.8);
+}
+
+#inspector .sectionHeader {
+	background: rgb(42,54,66);
+	padding: 5px;
+	display: inline-block;
+	margin-left: 10px;
+	margin-top: 10px;
+	-webkit-border-top-left-radius: 5px;
+	-webkit-border-top-right-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+#inspector .property {
+	margin: 0 0 15px;
+}
+
+#inspector .property .label {
+	color: #cdcdcd;
+	display: block;
+	font-size: 85%;
+	margin-bottom: 5px;
+	text-align: left;
+}
+
+#inspector .property div[class^='col'] > .label {
+	margin-left: -15px;
+}
+
+#inspector .property .form-control {
+	background: rgb(62,74,86);
+	border: 1px solid rgb(32,44,56);
+	border-top: 1px solid rgb(22,34,46);
+	color: #eee;
+	height: 20px;
+	padding: 2px 5px;
+	font-size: 12px;
+	line-height: 1.5;
+	border-radius: 0;
+}
+
+#inspector .property .input-group-addon {
+	padding: 2px 5px;
+	line-height: 14px;
+	background: transparent;
+	color: #cdcdcd;
+	border: 0;
+}

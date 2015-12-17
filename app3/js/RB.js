@@ -162,21 +162,21 @@ RB.prototype.computeCollisions = function() {
     else if (particle.x[1] > Canvas.SIZE.HEIGHT - particle.r){
       particle.P[1] = -Math.abs(particle.P[1]);
     }
-    // if (particle.x[0] < particle.r) {
-    //   particle.applyForce([0, Math.abs(particle.P[0]), 0]);
-    //   particle.P[0] = 0;
-    // } else if (particle.x[0] > Canvas.SIZE.WIDTH - particle.r) {
-    //   particle.applyForce([0, -Math.abs(particle.P[0]), 0]);
-    //   particle.P[0] = 0;
-    // }
-    //
-    // if (particle.x[1] < particle.r) {
-    //   particle.applyForce([0, Math.abs(particle.P[1]), 0]);
-    //   particle.P[1] = 0;
-    // } else if (particle.x[1] > Canvas.SIZE.HEIGHT - particle.r) {
-    //   particle.applyForce([0, -Math.abs(particle.P[1]), 0]);
-    //   particle.P[1] = 0;
-    // }
+     if (particle.x[0] < particle.r) {
+       particle.applyForce([0, Math.abs(particle.P[0]), 0]);
+       particle.P[0] = 0;
+     } else if (particle.x[0] > Canvas.SIZE.WIDTH - particle.r) {
+       particle.applyForce([0, -Math.abs(particle.P[0]), 0]);
+       particle.P[0] = 0;
+     }
+    
+     if (particle.x[1] < particle.r) {
+       particle.applyForce([0, Math.abs(particle.P[1]), 0]);
+       particle.P[1] = 0;
+     } else if (particle.x[1] > Canvas.SIZE.HEIGHT - particle.r) {
+       particle.applyForce([0, -Math.abs(particle.P[1]), 0]);
+       particle.P[1] = 0;
+     }
   }
 };
 
