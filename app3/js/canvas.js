@@ -1,80 +1,60 @@
+function drawCircle(context, position, radius, color) {
+	context.beginPath();
+	context.arc(position.x, position.y, radius, 0, 2 * Math.PI);
+	context.fillStyle = color;
+	context.fill();
+	context.stroke();
+}
+
+function drawLine(context, fromPosition, toPosition, color, width) {
+	context.beginPath();
+	context.lineWidth = width;
+	context.strokeStyle = color;
+	context.moveTo(fromPosition[0], fromPosition[1]);
+	context.lineTo(toPosition[0], toPosition[1]);
+	context.stroke();
+}
+
 function Canvas(canvasElement) {
 	/* Properties */
 	this.state = null;
+	this.action = false;
 	this.objects = [];
 	this.canvasElement = canvasElement;
 	this.context = this.canvasElement[0].getContext("2d");
 	this.mouseButtonPressed = false;
-	this.mouseButtonClickCoords = {x: 0, y: 0};
-
+	
 	/* Call init methods */
 	this.initMouseListeners();
 }
 
-Canvas.STATES = {
-	NONE: 0,
-	CREATING_RIGIDBODY: 1,
-	MOVING_RIGIDBODY: 2,
-	APPLYING_FORCE: 3,
-	DELETING_RIGIDBODY: 4
-};
+Canvas.STATES = {NONE: 0, CREATING_SPHERE: 1, MOVING_SPHERE: 2, APPLYING_FORCE: 3};
 Canvas.SIZE = {WIDTH: 800, HEIGHT: 600};
-Canvas.NUM_STEPS = 1;
 
-Canvas.prototype.setMouseButtonClickCoords = function (evt) {
-	this.mouseButtonClickCoords.x = evt.pageX - this.canvasElement.offset().left;
-	this.mouseButtonClickCoords.y = evt.pageY - this.canvasElement.offset().top;
-};
-Canvas.prototype.createParticle = function (evt) {
-	var x = evt.pageX - this.canvasElement.offset().left;
-	var y = evt.pageY - this.canvasElement.offset().top;
-	var mouseVector = [x - this.mouseButtonClickCoords.x, y - this.mouseButtonClickCoords.y];
-
-	//setRadius of new Particle
-	var particleRadius = numeric.norm2(mouseVector);
-	if (particleRadius < 10) {	//Minimal size of particle
-		particleRadius = 10;
-	}
-	else if (particleRadius > 100) {	//Maximal size of particle
-		particleRadius = 100;
-	}
-	var particle = new Particle();
-	particle.setSphere(particleRadius, [this.mouseButtonClickCoords.x, this.mouseButtonClickCoords.y, 0], numeric.identity(3));
-	return particle;
-};
-Canvas.prototype.crateRigidBody = function (evt) {
-	var particle = this.createParticle(evt);
-	var rb = new RB(particle);
-	var isOverlap = false;
-	for (o in this.objects) {
-		if (this.objects[o].isOverlap(rb)) {
-			this.objects[o].join(rb);
-			isOverlap = true;
-		}
-	}
-	if (!isOverlap) {
-		this.objects.push(rb);
+Canvas.prototype.createSphere = function (evt) {
+	if (Canvas.state === Canvas.STATES.CREATING_SPHERE) {
+		var x = evt.pageX - this.canvasElement.offset().left;
+		var y = evt.pageY - this.canvasElement.offset().top;
+		var newPosition = new Position(x, y, 0);
+		var radius = newPosition.distance(this.objects[this.objects.length-1].getPosition());
+		this.objects[this.objects.length-1].setRadius(radius);
+	} else {
+		var x = evt.pageX - this.canvasElement.offset().left;
+		var y = evt.pageY - this.canvasElement.offset().top;
+		this.objects.push(new Sphere(new Position(x, y, 0), Sphere.DEFAULT_RADIUS));
+		this.state = Canvas.STATES.CREATING_SPHERE;
 	}
 };
 
-Canvas.prototype.moveRigidBody = function (evt) {
+Canvas.prototype.moveSphere = function (evt) {
 	// body...
 };
 
 Canvas.prototype.applyForce = function (evt) {
-	var x = evt.pageX - this.canvasElement.offset().left
-	var y = evt.pageY - this.canvasElement.offset().top
-	for (i in this.objects) {
-		var particle = this.objects[i].getParticle(x, y, 0);
-		if (particle != null) {
-			// particle.applyForce([0.05, 0.05, 0]);
-			this.objects[i].applyForce([0.05, 0.05, 0]);
-		}
-	}
+	// body...
 };
 
-Canvas.prototype.deleteRigidBody = function (evt) {
-	//TODO prerobit aktualne nefunguje
+Canvas.prototype.deleteSphere = function (evt) {
 	var x = evt.pageX - this.canvasElement.offset().left
 	var y = evt.pageY - this.canvasElement.offset().top
 	var pos = new Position(x, y, 0);
@@ -87,65 +67,52 @@ Canvas.prototype.deleteRigidBody = function (evt) {
 };
 
 Canvas.prototype.act = function (evt) {
-	switch (this.state) {
-		case Canvas.STATES.CREATING_RIGIDBODY:
-			this.crateRigidBody(evt);
+	switch (this.action) {
+
+		case "createSphere":
+			this.createSphere(evt);
 			break;
 
-		case Canvas.STATES.MOVING_RIGIDBODY:
-			this.moveRigidBody(evt);
+		case "moveSphere":
+			this.moveSphere(evt);
 			break;
 
-		case Canvas.STATES.DELETING_RIGIDBODY:
-			this.deleteRigidBody(evt);
+		case "deleteSphere":
+			this.deleteSphere(evt);
 			break;
 
-		case Canvas.STATES.APPLYING_FORCE:
+		case "applyForce":
 			this.applyForce(evt);
 			break;
 
 		default:
-			//TODO ??
-	}
-	;
+			//TODO
+	};
 
-	this.state = null;
+	this.action = false;
 };
 
-Canvas.prototype.render = function (dt) {
-
-	var dt2 = dt / Canvas.NUM_STEPS;
-	for (var j = 0; j < Canvas.NUM_STEPS; j++) {
-		for (var o in this.objects) {
-			var obj = this.objects[o];
-			obj.update(dt2);
-		} //TODO collision here
-		this.context.clearRect(0, 0, this.canvasElement[0].width, this.canvasElement[0].height);
-		for (var i = 0; i < this.objects.length; i++) {
-			this.objects[i].draw(this.context, 'black');
-		}
+Canvas.prototype.render = function () {
+	this.context.clearRect(0, 0, this.canvasElement[0].width, this.canvasElement[0].height);
+	for (var i = 0; i < this.objects.length; i++) {
+		drawCircle(this.context, this.objects[i].position, this.objects[i].radius, 'black');
 	}
 };
 
 Canvas.prototype.initMouseListeners = function () {
 	this.canvasElement.mousedown(function (evt) {
-		this.setMouseButtonClickCoords(evt);
-		this.mouseButtonPressed = true;
+		//this.act(evt);
+		this.createSphere(evt);
 	}.bind(this));
-
+	
 	this.canvasElement.mousemove(function (evt) {
-		if (this.mouseButtonPressed) {
-			if (this.state === Canvas.STATES.CREATING_RIGIDBODY) {
-				var particle = this.createParticle(evt);
-				this.render(0);
-				particle.draw(this.context, 'black');
-			}
+		//this.act(evt);
+		if (Canvas.state === Canvas.STATES.CREATING_SPHERE) {
+			this.createSphere(evt);
 		}
 	}.bind(this));
-
+	
 	this.canvasElement.mouseup(function (evt) {
-		this.act(evt);
 		Canvas.state = Canvas.STATES.NONE;
-		this.mouseButtonPressed = false;
 	}.bind(this));
 };
