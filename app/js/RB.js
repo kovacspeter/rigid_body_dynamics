@@ -55,7 +55,7 @@ RB.prototype.integrateEuler = function (dt) {
 
 	// Equations of motion
 	numeric.addeq(this.x, diff); //TODO UNCOMMENT
-	numeric.addeq(this.R, numeric.dot(this.getCrossMatrix(numeric.mul(this.omega, dt)), this.R));
+	numeric.addeq(this.R, numeric.dot(this.getCrossMatrix(this.omega), this.R));
 	numeric.addeq(this.P, numeric.mul(this.force, dt));
 	numeric.addeq(this.L, numeric.mul(this.torque, dt));
 };
