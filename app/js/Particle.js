@@ -22,10 +22,12 @@ function Particle() {
 	// this.force;     float3
 	// this.torque;    float3
 	// -----------------------------------------------------
+	this.rb = undefined;
 	this.force = [0, 0, 0];
 	this.torque = [0, 0, 0];
+	this.bx = undefined;
 }
-Particle.DENSITY = 1 / ((4 / 3) * Math.PI * 1000);						// for r = 10, mass should be = 1
+Particle.DENSITY = 1 / ((4 / 3) * Math.PI * 1000);		// for r = 10, mass should be = 1
 Particle.prototype.setSphere = function (r, x, R) {
 	this.r = r;
 	this.mass = this.computeMass();
@@ -40,6 +42,11 @@ Particle.prototype.setSphere = function (r, x, R) {
 	];
 	this.Ibodyinv = numeric.inv(this.Ibody);
 	this.computeAux();
+};
+
+Particle.prototype.draw = function (context, color) {
+	// console.log(this.rb.R);
+	drawCircle(context, numeric.add(this.rb.x, numeric.dot(this.rb.R, this.bx)), this.r, color);
 };
 
 Particle.prototype.computeAux = function () {
@@ -142,11 +149,6 @@ Particle.prototype.update = function (dt) {
 	this.move(dt);
 }
 
-Particle.prototype.draw = function (context, color) {
-	// console.log(this.position);
-	drawCircle(context, this.x, this.r, color)
-};
-
 Particle.prototype.isInside = function (x, y, z) {
 	var sub = numeric.sub([x, y, z], this.x);
 	var power = numeric.pow(sub, [2, 2, 2]);
@@ -156,49 +158,9 @@ Particle.prototype.isInside = function (x, y, z) {
 };
 
 Particle.prototype.applyForce = function (force) {
-	numeric.addeq(this.force, force);
-	var relpos = numeric.sub(this.rb.x, this.x);
-	this.torque = numeric.dot(this.getCrossMatrix(relpos), this.force);
+	numeric.addeq(this.rb.force, force);
+	numeric.addeq(this.rb.torque, numeric.dot(this.getCrossMatrix(numeric.sub(this.bx, this.rb.x)), force));
 }
-
-// Particle.prototype.updateTorque = function () {
-//   var torque = [0, 0, 0];
-//   var bodyPositionX = [
-//     [0, -bodyPositionX[2], bodyPositionX[1]],
-//     [bodyPositionX[2], 0 , -bodyPositionX[0]],
-//     [-bodyPositionX[1], bodyPositionX[0], 0]
-//   ];
-//     numeric.addeq(torque, numeric.dot(bodyPositionX, this.force));
-//   this.torque = torque;
-// };
-//
-// Particle.prototype.updateLinMomentum = function() {
-//   this.linearMomentum = numeric.mul(this.velocity, mass);
-// };
-//
-// Particle.prototype.move = function(dt) {
-//   if (numeric.sum(this.force) != 0) {
-//     this.velocity = numeric.div(this.force, this.mass);
-//     this.force = [0,0,0];
-//   }
-//   var dtVelocity = numeric.mul(this.velocity, dt);
-//   this.position = numeric.add(dtVelocity, this.position);
-//
-//   //TODO toto sa asi da prepisat lahsie iba pomocou minuska?
-//   if (this.position[0] < this.radius) {
-//     this.velocity[0] = Math.abs(this.velocity[0]);
-//   }
-//   else if (this.position[0] > Canvas.SIZE.WIDTH - this.radius){
-//     this.velocity[0] = -Math.abs(this.velocity[0]);
-//   }
-//
-//   if (this.position[1] < this.radius) {
-//     this.velocity[1] = Math.abs(this.velocity[1]);
-//   }
-//   else if (this.position[1] > Canvas.SIZE.HEIGHT - this.radius){
-//     this.velocity[1] = -Math.abs(this.velocity[1]);
-//   }
-// }
 
 function pinv(A) {
 	var z = numeric.svd(A), foo = z.S[0];

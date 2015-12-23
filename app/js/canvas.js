@@ -71,7 +71,7 @@ Canvas.prototype.applyForce = function (evt) {
 			//set Force vector
 			var force = [this.mouseButtonClickCoords.x - x, this.mouseButtonClickCoords.y - y, 0];
 			force = numeric.mul(force, 1/1000 * Math.pow(object.getMass(), 3/2));
-			object.applyForce(force);
+			particle.applyForce(force);
 		}
 	}
 };
@@ -122,7 +122,8 @@ Canvas.prototype.render = function (dt) {
 		for (var o in this.objects) {
 			var obj = this.objects[o];
 			obj.update(dt2);
-		} //TODO collision here
+		}
+		//TODO collision here
 		this.context.clearRect(0, 0, this.canvasElement[0].width, this.canvasElement[0].height);
 		for (var i = 0; i < this.objects.length; i++) {
 			this.objects[i].draw(this.context, 'black');
