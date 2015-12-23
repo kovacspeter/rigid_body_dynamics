@@ -65,10 +65,13 @@ Canvas.prototype.applyForce = function (evt) {
 	var x = evt.pageX - this.canvasElement.offset().left
 	var y = evt.pageY - this.canvasElement.offset().top
 	for (i in this.objects) {
-		var particle = this.objects[i].getParticle(x, y, 0);
+		var object = this.objects[i];
+		var particle = object.getParticle(this.mouseButtonClickCoords.x, this.mouseButtonClickCoords.y, 0);
 		if (particle != null) {
-			// particle.applyForce([0.05, 0.05, 0]);
-			this.objects[i].applyForce([0.05, 0.05, 0]);
+			//set Force vector
+			var force = [this.mouseButtonClickCoords.x - x, this.mouseButtonClickCoords.y - y, 0];
+			force = numeric.mul(force, 1/1000 * Math.pow(object.getMass(), 3/2));
+			object.applyForce(force);
 		}
 	}
 };
@@ -139,6 +142,12 @@ Canvas.prototype.initMouseListeners = function () {
 				var particle = this.createParticle(evt);
 				this.render(0);
 				particle.draw(this.context, 'black');
+			}
+			else if (this.state === Canvas.STATES.APPLYING_FORCE) {
+				var x = evt.pageX - this.canvasElement.offset().left
+				var y = evt.pageY - this.canvasElement.offset().top
+				this.render(0);
+				drawLine(this.context, [x, y], [this.mouseButtonClickCoords.x, this.mouseButtonClickCoords.y], '#0000aa', 2);
 			}
 		}
 	}.bind(this));
