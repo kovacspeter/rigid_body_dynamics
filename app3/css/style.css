@@ -1,0 +1,27 @@
+html body {
+	height: 100%;
+	margin: 0;
+	width: 100%;
+}
+body {
+	padding-top: 50px;
+}
+
+.container {
+	width: 992px !important;
+	margin-top: -50px;
+	padding-top: 50px;
+}
+
+#menu {
+  position: relative;
+  z-index: 10;
+}
+
+canvas {
+	display: block;
+	max-width: 100%;
+	max-height: 100%;
+	margin: 0;
+	border: solid;
+}
