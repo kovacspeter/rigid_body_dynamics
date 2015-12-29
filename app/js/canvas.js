@@ -43,18 +43,31 @@ Canvas.prototype.createParticle = function (evt) {
 	return particle;
 };
 Canvas.prototype.crateRigidBody = function (evt) {
+	// First create particle
 	var particle = this.createParticle(evt);
+	// Each particle belongs to some rigid body
 	var rb = new RB(particle);
-	var isOverlap = false;
+
+	overlaping = [];
+	// If bodies are overlaping after creation merge them into one RB
 	for (o in this.objects) {
 		if (this.objects[o].isOverlap(rb)) {
-			this.objects[o].join(rb);
-			isOverlap = true;
+			overlaping.push(this.objects[o]);
 		}
 	}
-	if (!isOverlap) {
-		this.objects.push(rb);
+
+	rb.join(overlaping);
+
+	// Delete merged bodies
+	var new_objects = [];
+	for (o in this.objects) {
+		if (this.objects[o].particles.length != 0) {
+			new_objects.push(this.objects[o]);
+		}
 	}
+	this.objects = new_objects;
+	// Put new (possibly merged) object into objects
+	this.objects.push(rb);
 };
 
 Canvas.prototype.moveRigidBody = function (evt) {

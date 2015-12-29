@@ -216,32 +216,32 @@ RB.prototype.getVelocity = function () {
 	return this.v;
 };
 
-RB.prototype.join = function (rb) {
-	// TODO add transitivity
-
+RB.prototype.join = function (rbs) {
 	// We need to compute new center of mass
 	var pos = [0, 0, 0];
+
 	// First we will take all ORIGINAL rigid body particles
 	for (var p in this.particles) {
 		var particle = this.particles[p];
 		// pos += position * mass of particle
 		numeric.addeq(pos, numeric.mul(numeric.add(this.x, particle.bx), particle.mass));
 	}
-
-	// We need to take into account also new particles added from JOINED rigid body
-	for (var p in rb.particles) {
-		var particle = rb.particles[p];
-		// pos += position * mass of particle
-		numeric.addeq(pos, numeric.mul(numeric.add(particle.bx, rb.x), particle.mass));
+	for (var rb in rbs) {
+		// We need to take into account also new particles added from JOINED rigid body
+		for (var p in rbs[rb].particles) {
+			var particle = rbs[rb].particles[p];
+			// pos += position * mass of particle
+			numeric.addeq(pos, numeric.mul(numeric.add(particle.bx, rbs[rb].x), particle.mass));
+		}
+		// Add masses of joined bodies
+		this.mass += rbs[rb].getMass();
 	}
-	// Add masses of joined bodies
-	this.mass += rb.getMass();
-
 	// Compute new center of mass of this rigid body.
 	pos = numeric.div(pos, this.mass);
 
 	// Now we have new center of mass we need to recompute relative
 	// positions of particles from original rigid body
+
 	for (var p in this.particles) {
 		var particle = this.particles[p];
 		// bx = x - ceneter of mass
@@ -249,15 +249,18 @@ RB.prototype.join = function (rb) {
 	}
 
 	// Now we have new center of mass we need to recompute relative
-	// positions of particles from joined rigid body
-	for (var p in rb.particles) {
-		var particle = rb.particles[p];
-		// bx = x - ceneter of mass
-		particle.bx = numeric.sub(numeric.add(particle.bx, rb.x), pos);
-		// append new particles to joined rigid body
-		this.particles.push(particle);
-		// change rigid body to which particle belongs
-		particle.rb = this;
+	// positions of particles from joined rigid bodies
+	for (var rb in rbs) {
+		for (var p in rbs[rb].particles) {
+			var particle = rbs[rb].particles[p];
+			// bx = x - ceneter of mass
+			particle.bx = numeric.sub(numeric.add(particle.bx, rbs[rb].x), pos);
+			// append new particles from joined rigid bodies
+			this.particles.push(particle);
+			// change rigid body to which particle belongs
+			particle.rb = this;
+		}
+		rbs[rb].particles = [];
 	}
 	// Assign new center of mass to this rigid body.
 	this.x = pos;
