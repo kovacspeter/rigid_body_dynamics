@@ -20,14 +20,6 @@ App.prototype.initControls = function(where) {
     this.canvas.state = states.CREATING_RIGIDBODY;
   }.bind(this));
 
-  this.createButton(where, 'Move Rigid Body', 'moveRigidBody', function() {
-    this.canvas.state = states.MOVING_RIGIDBODY;
-  }.bind(this));
-
-  this.createButton(where, 'Delete Rigid Body', 'deleteRigidBody', function() {
-    this.canvas.state = states.DELETING_RIGIDBODY;
-  }.bind(this));
-
   this.createButton(where, 'Apply Force', 'applyForce', function() {
     this.canvas.state = states.APPLYING_FORCE;
   }.bind(this));
@@ -53,6 +45,6 @@ App.prototype.run = function() {
     this.lastTimerTick = Date.now();
   }
 	this.objectInspector.refresh(this.canvas.objects);
-	
+
 	window.requestAnimationFrame(this.run.bind(this));
 };

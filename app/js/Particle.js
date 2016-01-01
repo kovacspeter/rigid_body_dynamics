@@ -46,7 +46,7 @@ Particle.prototype.setSphere = function (r, x, R) {
 
 Particle.prototype.draw = function (context, color) {
 	// console.log(this.rb.R);
-	drawCircle(context, numeric.add(this.rb.x, numeric.dot(this.rb.R, this.bx)), this.r, color);
+	drawCircle(context, numeric.add(this.rb.x, numeric.dot(this.rb.q.normalize().toMatrix(), this.bx)), this.r, color);
 };
 
 Particle.prototype.computeAux = function () {
