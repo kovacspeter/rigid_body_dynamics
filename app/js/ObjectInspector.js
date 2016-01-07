@@ -10,28 +10,27 @@ function Inspector($inspectorElement) {
 	});
 };
 
-Inspector.prototype.addBodyContainer = function(i) {
-	var $bodyContainer = $('<div></div>').addClass('rigidBody-container').attr('id', 'rigidBody-container-'+i).hide();
+Inspector.prototype.addBodyContainer = function(id) {
+	var $bodyContainer = $('<div></div>').addClass('rigidBody-container').attr('id', 'rigidBody-container-'+id).data('id', id).hide();
 	this.initPropertyContainer($bodyContainer);
 	this.initParticlesContainer($bodyContainer);
 	
 	this.$element.find('.inspector-container').append(
 		$('<li></li>').append(
-			$('<a href="#"></a>').addClass('toggleSection').text('Rigid Body '+i).click(function(){
+			$('<a href="#"></a>').addClass('toggleSection').text('Rigid Body').click(function(){
 				$(this).siblings().slideToggle();
 				$(this).parent().toggleClass('active');
 				return false;
 			})
 		).append($bodyContainer)
 	);
-	
 	return $bodyContainer;
 };
 
-Inspector.prototype.addParticleContainer = function(i, j) {
-	var $particleContainer = $('<li></li>').addClass('particle-container').attr('id', 'particle-container-'+i+'-'+j);
+Inspector.prototype.addParticleContainer = function(id, parentID) {
+	var $particleContainer = $('<li></li>').addClass('particle-container').attr('id', 'particle-container-'+id).data('id', id);
 	$particleContainer.append(
-	  $('<a href="#"></a>').addClass('toggleSection').text('Particle '+j).click(function(){
+	  $('<a href="#"></a>').addClass('toggleSection').text('Particle').click(function(){
 			$(this).siblings().slideToggle();
 			$(this).parent().toggleClass('active');
 			return false;
@@ -114,7 +113,7 @@ Inspector.prototype.addParticleContainer = function(i, j) {
 		)
 	);
 	
-	this.$element.find('#rigidBody-container-'+i).find('.rigidBody-particles-container').append($particleContainer);
+	this.$element.find('#rigidBody-container-'+parentID).find('.rigidBody-particles-container').append($particleContainer);
 	return $particleContainer;
 };
 
@@ -280,23 +279,49 @@ Inspector.prototype.initParticlesContainer = function($bodyContainer) {
 };
 
 Inspector.prototype.refresh = function(objects){
+	var existedObjectIDs = [];
 	for (var i in objects) {
 		var object = objects[i];
-		var $bodyContainer = this.$element.find('#rigidBody-container-'+i); 
+		existedObjectIDs.push(object.ID);
+		var $bodyContainer = this.$element.find('#rigidBody-container-' + object.ID);
 		if ($bodyContainer.length === 0) {
-			$bodyContainer = this.addBodyContainer(i);
+			$bodyContainer = this.addBodyContainer(object.ID);
 		}
 		this.updateBodyValues(object, $bodyContainer);
-		
+
+		var existedParticleIDs = [];
 		for (var j in object.particles) {
 			var particle = object.particles[j];
-			var $particleContainer = $bodyContainer.find('#particle-container-'+i+'-'+j);
+			existedParticleIDs.push(particle.ID);
+			var $particleContainer = $bodyContainer.find('#particle-container-' + particle.ID);
 			if ($particleContainer.length === 0) {
-				$particleContainer = this.addParticleContainer(i, j);
+				$particleContainer = this.addParticleContainer(particle.ID, object.ID);
 			}
 			this.updateParticleValues(particle, $particleContainer);
 		}
+		$bodyContainer.find('.particle-container').each(function () {
+			if (existedParticleIDs.indexOf($(this).data('id')) < 0) {
+				$(this).remove();
+			}
+		});
 	}
+	
+	
+	// Remove non-existed rigid bodies
+	var $element = this.$element;
+	this.$element.find('.rigidBody-container').each(function () {
+		if (existedObjectIDs.indexOf($(this).data('id')) < 0) {
+			var activeParticleID = -1;
+			if ($(this).closest('li').hasClass('active')) {
+				activeParticleID = $(this).find('.particle-container').eq(0).data('id');
+			}
+			$(this).closest('li').remove();
+			if (activeParticleID >= 0) {
+				console.log(activeParticleID);
+				$element.find('#particle-container-' + activeParticleID).closest('.rigidBody-container').siblings('.toggleSection').click();
+			}
+		}
+	});
 };
 
 Inspector.prototype.updateBodyValues = function(object, $bodyContainer) {

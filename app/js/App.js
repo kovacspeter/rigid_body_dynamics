@@ -25,11 +25,14 @@ App.prototype.initControls = function(where) {
   }.bind(this));
 };
 
-App.prototype.createButton = function(where, text, icon, id, func){
+App.prototype.createButton = function(where, text, icon, id, clickFunction){
   var button = $("<button/>", {
     id: id,
     html: '<i class="glyphicon glyphicon-'+icon+'"></i> ' + text,
-    click: func
+    click: function(){
+			clickFunction();
+			$(this).addClass('active');
+		}
   });
 
   where.append(button);
@@ -47,4 +50,9 @@ App.prototype.run = function() {
 	this.objectInspector.refresh(this.canvas.objects);
 
 	window.requestAnimationFrame(this.run.bind(this));
+};
+
+/* GLOBAL METHODS */
+App.resetButtons = function() {
+	$('#menu').find('button').removeClass('active');
 };

@@ -40,8 +40,7 @@ Canvas.prototype.createParticle = function(evt) {
   } else if (particleRadius > 100) { //Maximal size of particle
     particleRadius = 100;
   }
-  var particle = new Particle();
-  particle.setSphere(particleRadius, [this.mouseButtonClickCoords.x, this.mouseButtonClickCoords.y, 0], numeric.identity(3));
+  var particle = new Particle(particleRadius, [this.mouseButtonClickCoords.x, this.mouseButtonClickCoords.y, 0]);
   return particle;
 };
 Canvas.prototype.crateRigidBody = function(evt) {
@@ -50,7 +49,7 @@ Canvas.prototype.crateRigidBody = function(evt) {
   // Each particle belongs to some rigid body
   var rb = new RB(particle);
 
-  overlaping = [];
+  var overlaping = [];
   // If bodies are overlaping after creation merge them into one RB
   for (o in this.objects) {
     if (this.objects[o].isOverlap(rb)) {
@@ -63,7 +62,7 @@ Canvas.prototype.crateRigidBody = function(evt) {
   // Delete merged bodies
   var new_objects = [];
   for (o in this.objects) {
-    if (this.objects[o].particles.length != 0) {
+    if (this.objects[o].particles.length > 0) {
       new_objects.push(this.objects[o]);
     }
   }
@@ -145,5 +144,6 @@ Canvas.prototype.initMouseListeners = function() {
     this.act(evt);
     Canvas.state = Canvas.STATES.NONE;
     this.mouseButtonPressed = false;
+		App.resetButtons();
   }.bind(this));
 };

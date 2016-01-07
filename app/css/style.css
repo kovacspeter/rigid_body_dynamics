@@ -71,13 +71,8 @@ button {
 	text-align: center;
 	white-space: nowrap;
 	vertical-align: middle;
-	-ms-touch-action: manipulation;
-	touch-action: manipulation;
 	cursor: pointer;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+	outline: none !important;
 	-webkit-transition: color 200ms, background 200ms; /* Safari */
 	transition: color 200ms, background 200ms;
 }
@@ -117,19 +112,20 @@ button:hover .glyphicon, button.active .glyphicon {
 #inspector a:hover {
 	text-decoration: none;
 }
-#inspector a.toggleSection:after {
+#inspector a.toggleSection:before {
 	content: '';
 	display: inline-block;
-	margin-left: 10px;
-	position: relative;
-	top: -1px;
+	margin-top: -2.5px;
+	position: absolute;
+	right: 10px;
+	top: 50%;
 	width: 0;
 	height: 0;
 	border-style: solid;
 	border-width: 5px 5px 0 5px;
 	border-color: #fff transparent transparent transparent;
 }
-#inspector li.active > a.toggleSection:after {
+#inspector li.active > a.toggleSection:before {
 	border-width: 0 5px 5px 5px;
 	border-color: transparent transparent #fff transparent;
 }
@@ -140,7 +136,15 @@ button:hover .glyphicon, button.active .glyphicon {
 	margin: 0 0 1px;
 	padding: 0;
 }
-
+#inspector .inspector-container {
+	counter-reset: objects;
+}
+#inspector .inspector-container > li {
+	counter-increment: objects;
+}
+#inspector .inspector-container > li > a.toggleSection:after {
+	content: " #" counter(objects);
+}
 #inspector .inspector-container > li > a.toggleSection {
 	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#425a6c+0,364657+100 */
 	background: #425a6c; /* Old browsers */
@@ -155,11 +159,12 @@ button:hover .glyphicon, button.active .glyphicon {
 	color: #cdcdcd;
 	display: block;
 	padding: 5px 10px;
+	position: relative;
 	-webkit-transition: color 200ms, background 200ms; /* Safari */
 	transition: color 200ms, background 200ms;
 }
 
-#inspector .inspector-container > li > a.toggleSection:after {
+#inspector .inspector-container > li > a.toggleSection:before {
 	border-top-color:#cdcdcd; 
 }
 
@@ -176,10 +181,7 @@ button:hover .glyphicon, button.active .glyphicon {
 
 	color: #eee;
 }
-#inspector .inspector-container > li > a:hover:after {
-	border-top-color: #eee;
-}
-#inspector .inspector-container > li.active > a:after {
+#inspector .inspector-container > li > a:hover:before, #inspector .inspector-container > li.active > a:before {
 	border-bottom-color: #eee;
 }
 
@@ -193,11 +195,11 @@ button:hover .glyphicon, button.active .glyphicon {
 	margin: 5px 10px;
 }
 
-#inspector .rigidBody-container > li > a.toggleSection:after, #inspector .rigidBody-container > li > a.toggleSection:hover:after {
+#inspector .rigidBody-container > li > a.toggleSection:before, #inspector .rigidBody-container > li > a.toggleSection:hover:before {
 	border-top-color: rgb(149,149,149);
 }
 
-#inspector .rigidBody-container > li.active > a.toggleSection:after {
+#inspector .rigidBody-container > li.active > a.toggleSection:before {
 	border-bottom-color: rgb(149,149,149);
 }
 
@@ -208,7 +210,23 @@ button:hover .glyphicon, button.active .glyphicon {
 
 #inspector .rigidBody-particles-container {
 	background: rgb(42,54,66);
+	counter-reset: particles;
 	padding: 10px;
+}
+
+#inspector .rigidBody-particles-container > li {
+	counter-increment: particles;
+}
+#inspector .rigidBody-particles-container > li > a.toggleSection {
+	position: relative;
+}
+#inspector .rigidBody-particles-container > li > a.toggleSection:before {
+	left: 100%;
+	margin-left: 10px;
+	right: auto;
+}
+#inspector .rigidBody-particles-container > li > a.toggleSection:after {
+	content: " #" counter(particles);
 }
 
 #inspector .rigidBody-particles-container > li:first-child > a {
