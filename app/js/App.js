@@ -16,19 +16,19 @@ App.prototype.initControls = function(where) {
 
   var states = Canvas.STATES;
 
-  this.createButton(where, 'Create Rigid Body', 'createRigidBody', function() {
-    this.canvas.state = states.CREATING_RIGIDBODY;
+  this.createButton(where, 'Add particle', 'plus', 'addParticle', function() {
+    this.canvas.state = states.ADDING_PARTICLE;
   }.bind(this));
 
-  this.createButton(where, 'Apply Force', 'applyForce', function() {
+  this.createButton(where, 'Apply Force', 'hand-right', 'applyForce', function() {
     this.canvas.state = states.APPLYING_FORCE;
   }.bind(this));
 };
 
-App.prototype.createButton = function(where, text, id, func){
+App.prototype.createButton = function(where, text, icon, id, func){
   var button = $("<button/>", {
     id: id,
-    text: text,
+    html: '<i class="glyphicon glyphicon-'+icon+'"></i> ' + text,
     click: func
   });
 
