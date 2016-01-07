@@ -15,7 +15,7 @@ function Canvas(canvasElement) {
 }
 Canvas.STATES = {
   NONE: 0,
-  CREATING_RIGIDBODY: 1,
+  ADDING_PARTICLE: 1,
   APPLYING_FORCE: 3
 };
 Canvas.SIZE = {
@@ -89,7 +89,7 @@ Canvas.prototype.applyForce = function(evt) {
 
 Canvas.prototype.act = function(evt) {
   switch (this.state) {
-    case Canvas.STATES.CREATING_RIGIDBODY:
+    case Canvas.STATES.ADDING_PARTICLE:
       this.crateRigidBody(evt);
       break;
 
@@ -128,7 +128,7 @@ Canvas.prototype.initMouseListeners = function() {
 
   this.canvasElement.mousemove(function(evt) {
     if (this.mouseButtonPressed) {
-      if (this.state === Canvas.STATES.CREATING_RIGIDBODY) {
+      if (this.state === Canvas.STATES.ADDING_PARTICLE) {
         var particle = this.createParticle(evt);
         this.render(0);
         particle.draw(this.context, 'black');
