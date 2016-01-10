@@ -88,7 +88,7 @@ Inspector.prototype.addParticleContainer = function(id, parentID) {
 			)
 		).append(
 			$('<div></div>').addClass('property').append(
-				$('<span></span>').addClass('label').text('Velocity:')
+				$('<span></span>').addClass('label').text('Momentum:')
 			).append(
 				$('<div></div>').addClass('container-fluid').append(
 					$('<div></div>').addClass('row').append(
@@ -96,7 +96,7 @@ Inspector.prototype.addParticleContainer = function(id, parentID) {
 							$('<div></div>').addClass('input-group').append(
 								$('<span></span>').addClass('input-group-addon').text('X')
 							).append(
-								$('<input type="text" />').addClass('form-control velocity-x')
+								$('<input type="text" />').addClass('form-control momentum-x')
 							)
 						)
 					).append(
@@ -104,7 +104,7 @@ Inspector.prototype.addParticleContainer = function(id, parentID) {
 							$('<div></div>').addClass('input-group').append(
 								$('<span></span>').addClass('input-group-addon').text('Y')
 							).append(
-								$('<input type="text" />').addClass('form-control velocity-y')
+								$('<input type="text" />').addClass('form-control momentum-y')
 							)
 						)
 					)
@@ -317,7 +317,7 @@ Inspector.prototype.refresh = function(objects){
 			}
 			$(this).closest('li').remove();
 			if ((activeParticleID >= 0) && (!$element.find('#particle-container-' + activeParticleID).closest('.rigidBody-container').closest('li').hasClass('active'))) {
-				$element.find('#particle-container-' + activeParticleID).closest('.rigidBody-container').siblings('.toggleSection').click();
+				$element.find('#particle-container-' + activeParticleID).closest('.rigidBody-container').show().closest('li').addClass('active');
 			}
 		}
 	});
@@ -339,10 +339,12 @@ Inspector.prototype.updateBodyValues = function(object, $bodyContainer) {
 };
 
 Inspector.prototype.updateParticleValues = function(particle, $particleContainer) {
-	$particleContainer.find('input.position-x').val(particle.getPosition()[0]);
-	$particleContainer.find('input.position-y').val(particle.getPosition()[1]);
+	var particlePosition = particle.getPosition();
+	$particleContainer.find('input.position-x').val(particlePosition[0]);
+	$particleContainer.find('input.position-y').val(particlePosition[1]);
 	$particleContainer.find('input.radius').val(particle.getRadius());
 	$particleContainer.find('input.mass').val(particle.getMass());
-	$particleContainer.find('input.velocity-x').val(particle.getVelocity()[0]);
-	$particleContainer.find('input.velocity-y').val(particle.getVelocity()[1]);
+	var particleMomentum = particle.getMomentum();
+	$particleContainer.find('input.momentum-x').val(particleMomentum[0]);
+	$particleContainer.find('input.momentum-y').val(particleMomentum[1]);
 };

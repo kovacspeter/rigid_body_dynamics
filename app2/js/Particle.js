@@ -160,7 +160,7 @@ Particle.prototype.renormalizeR = function () {
 }
 
 Particle.prototype.update = function () {
-	this.P = numeric.mul(this.rb.getVelocity(), this.getMass());
+	
 };
 
 Particle.prototype.isInside = function (x, y, z) {

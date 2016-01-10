@@ -1,4 +1,4 @@
-function Particle() {
+function Particle(radius, position) {
 	// -----------------------------------------------------
 	//     Constant:
 	// this.r;         float    radius
@@ -15,7 +15,7 @@ function Particle() {
 	// -----------------------------------------------------
 	//     Derived:
 	// this.Iinv;      matrix3
-	// this.v;         float3
+	// this.v;         float3		--> #DISCUSS: IS velocity of the particle really needed?
 	// this.omega;     float3
 	// -----------------------------------------------------
 	//     Computed:
@@ -25,28 +25,39 @@ function Particle() {
 	this.rb = undefined;
 	this.force = [0, 0, 0];
 	this.torque = [0, 0, 0];
-	this.bx = undefined;
-}
-Particle.DENSITY = 1 / ((4 / 3) * Math.PI * 1000);		// for r = 10, mass should be = 1
-Particle.prototype.setSphere = function (r, x, R) {
-	this.r = r;
-	this.mass = this.computeMass();
-	this.x = x;
-	this.R = R;
+	this.bx = [0, 0, 0];
+	this.x = position;
+	this.R = numeric.identity(3);
 	this.P = [0, 0, 0];
 	this.L = [0, 0, 0];
+	this.setSphere(radius, position);
+	this.computeAux();
+}
+Particle.DENSITY = 1 / ((4 / 3) * Math.PI * 1000);		// for r = 10, mass should be = 1
+Particle.LAST_ID = 0;
+
+Particle.prototype.setSphere = function (r) {
+	this.r = r;
+	this.mass = this.computeMass();
 	this.Ibody = [
-		[2 * this.mass * Math.pow(r, 2) / 5, 0, 0],
-		[0, 2 * this.mass * Math.pow(r, 2) / 5, 0],
-		[0, 0, 2 * this.mass * Math.pow(r, 2) / 5]
+		[2 * this.mass * Math.pow(this.r, 2) / 5, 0, 0],
+		[0, 2 * this.mass * Math.pow(this.r, 2) / 5, 0],
+		[0, 0, 2 * this.mass * Math.pow(this.r, 2) / 5]
 	];
 	this.Ibodyinv = numeric.inv(this.Ibody);
-	this.computeAux();
 };
 
 Particle.prototype.draw = function (context, color) {
-	// console.log(this.rb.R);
-	drawCircle(context, numeric.add(this.rb.x, numeric.dot(this.rb.q.normalize().toMatrix(), this.bx)), this.r, color);
+	var position = this.x;
+	if (this.rb) {
+		position = numeric.add(this.rb.x, numeric.dot(this.rb.q.normalize().toMatrix(), this.bx));
+	}
+	drawCircle(context, position, this.r, color);
+};
+
+Particle.prototype.drawCentre = function(context) {
+	drawX(context, this.getPosition(), 6, '#777');
+	drawLine(context, this.rb.getPosition(), this.getPosition(), '#222', 1);
 };
 
 Particle.prototype.computeAux = function () {
@@ -75,7 +86,11 @@ Particle.prototype.getMomentum = function () {
 	return this.P;
 };
 Particle.prototype.getPosition = function () {
-	return this.x;
+	if (this.rb) {
+		return numeric.add(this.rb.x, this.bx);
+	} else {
+		return this.x;
+	}
 };
 Particle.prototype.getRadius = function () {
 	return this.r;
@@ -89,7 +104,7 @@ Particle.prototype.normalize = function (v) {
 	v[0] /= l;
 	v[1] /= l;
 	v[2] /= l;
-}
+};
 
 Particle.prototype.integrateEuler = function (dt) {
 
@@ -124,7 +139,7 @@ Particle.prototype.integrateEuler = function (dt) {
 	// var kdt = this.omega.mulScalar(g_world.kdw * dt);
 	// kdt.negate();
 	// this.L.accum(kdt);
-}
+};
 
 Particle.prototype.renormalizeR = function () {
 	var v0 = [this.R[0][0], this.R[1][0], this.R[2][0]];
@@ -142,15 +157,15 @@ Particle.prototype.renormalizeR = function () {
 	this.R[2][0] = v0[2];
 	this.R[2][1] = v1[2];
 	this.R[2][2] = v2[2];
-}
+};
 
-Particle.prototype.update = function (dt) {
-
-	this.move(dt);
-}
+Particle.prototype.update = function () {
+	this.P = numeric.mul(this.rb.getVelocity(), this.getMass());
+	//this.move(dt);
+};
 
 Particle.prototype.isInside = function (x, y, z) {
-	var sub = numeric.sub([x, y, z], this.x);
+	var sub = numeric.sub([x, y, z], this.getPosition());
 	var power = numeric.pow(sub, [2, 2, 2]);
 	var sum = numeric.sum(power);
 	// console.log(this.r - Math.sqrt(sum) >= 0);
@@ -158,9 +173,9 @@ Particle.prototype.isInside = function (x, y, z) {
 };
 
 Particle.prototype.applyForce = function (force) {
-	numeric.addeq(this.rb.force, force);
-	numeric.addeq(this.rb.torque, numeric.dot(this.getCrossMatrix(numeric.sub(this.bx, this.rb.x)), force));
-}
+	numeric.addeq(this.force, force);
+	//numeric.addeq(this.rb.torque, numeric.dot(this.getCrossMatrix(numeric.sub(this.bx, this.rb.x)), force));
+};
 
 function pinv(A) {
 	var z = numeric.svd(A), foo = z.S[0];
@@ -173,5 +188,5 @@ function pinv(A) {
 		else
 			Sinv[i] = 0;
 	}
-	return numeric.dot(numeric.dot(V, numeric.diag(Sinv)), numeric.transpose(U))
-}
+	return numeric.dot(numeric.dot(V, numeric.diag(Sinv)), numeric.transpose(U));
+};
