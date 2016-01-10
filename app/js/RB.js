@@ -36,12 +36,7 @@ function RB(particle) {
   this.computeAux();
   this.v = 0;
   this.omega = [0, 0, 0];
-	this.ID = ++RB.LAST_ID;
-	particle.ID = ++Particle.LAST_ID;
 }
-
-RB.LAST_ID = 0;
-
 RB.prototype.computeAux = function() {
   // Computes linear velocity
   this.v = numeric.div(this.P, this.mass);
@@ -52,6 +47,32 @@ RB.prototype.computeAux = function() {
   this.omega = numeric.dot(this.Iinv, this.L);
   this.force = [0, 0, 0];
   this.torque = [0, 0, 0];
+}
+
+RB.prototype.update = function(dt) {
+  this.integrateEuler(dt);
+  this.computeAux();
+  // this.renormalizeR();
+  this.computeCollisions();
+};
+RB.prototype.integrateEuler = function(dt) {
+  diff = numeric.mul(this.v, dt)
+
+  // Equations of motion
+  numeric.addeq(this.x, diff);
+  // ROTATION MATRIX IMPELem
+  //numeric.addeq(this.R, numeric.dot(this.getCrossMatrix(this.omega), this.R));
+  //NOTE: vsade pisu ze to ma byt 0 nie 1, zeby bol dakde bug?
+  var q = new Quaternion(this.omega, 1);
+  this.q = q.mul(this.q).smult(0.5);
+  this.q = this.q.normalize();
+  // this.q = this.q.smult(0.5).vmult(this.omega);
+  // this.q = this.q.normalize();
+  // console.log(this.q.v, this.q.s);
+  numeric.addeq(this.P, numeric.mul(this.force, dt));
+  numeric.addeq(this.L, numeric.mul(this.torque, dt));
+  console.log(this.P);
+  console.log(this.L);
 };
 RB.prototype.computeCollisions = function() {
   //TODO
@@ -85,25 +106,6 @@ RB.prototype.computeCollisions = function() {
     // }
   }
 };
-RB.prototype.integrateEuler = function(dt) {
-  diff = numeric.mul(this.v, dt)
-
-  // Equations of motion
-  numeric.addeq(this.x, diff);
-  // ROTATION MATRIX IMPELem
-  //numeric.addeq(this.R, numeric.dot(this.getCrossMatrix(this.omega), this.R));
-  //NOTE: vsade pisu ze to ma byt 0 nie 1, zeby bol dakde bug?
-  var q = new Quaternion(this.omega, 1);
-  this.q = q.mul(this.q).smult(0.5);
-  this.q = this.q.normalize();
-  // this.q = this.q.smult(0.5).vmult(this.omega);
-  // this.q = this.q.normalize();
-  // console.log(this.q.v, this.q.s);
-  numeric.addeq(this.P, numeric.mul(this.force, dt));
-  numeric.addeq(this.L, numeric.mul(this.torque, dt));
-  //console.log(this.P);
-  //console.log(this.L);
-};
 
 RB.prototype.draw = function(context, color) {
   for (var p in this.particles) {
@@ -111,12 +113,6 @@ RB.prototype.draw = function(context, color) {
   }
 };
 
-RB.prototype.update = function(dt) {
-  this.integrateEuler(dt);
-  this.computeAux();
-  // this.renormalizeR();
-  this.computeCollisions();
-};
 RB.prototype.updateTorque = function() {
   var torque = [0, 0, 0];
   for (var p in this.particles) {
@@ -126,6 +122,7 @@ RB.prototype.updateTorque = function() {
   }
   this.torque = torque;
 };
+
 RB.prototype.updateForce = function() {
   var force = [0, 0, 0];
   for (var p in this.particles) {
@@ -135,6 +132,7 @@ RB.prototype.updateForce = function() {
   }
   this.force = force;
 };
+
 RB.prototype.updateBodyInertia = function() {
   var J = [
     [0, 0, 0],
@@ -160,6 +158,20 @@ RB.prototype.updateBodyInertia = function() {
   }
   // Actual Inertia tensor of rigid body.
   this.Ibodyinv = pinv(J);
+};
+
+RB.prototype.isOverlap = function(rb) {
+  for (var i in this.particles) {
+    p1 = this.particles[i];
+    for (var j in rb.particles) {
+      p2 = rb.particles[j];
+      var dist = Math.sqrt(numeric.sum(numeric.pow(numeric.sub(p1.x, p2.x), [2, 2, 2])));
+      if (dist <= (p1.r + p2.r)) {
+        return true;
+      }
+    }
+  }
+  return false;
 };
 
 RB.prototype.getAcceleration = function() {
@@ -198,32 +210,28 @@ RB.prototype.getVelocity = function() {
   return this.v;
 };
 
-RB.prototype.isOverlap = function(rb) {
-  for (var i in this.particles) {
-    p1 = this.particles[i];
-    for (var j in rb.particles) {
-      p2 = rb.particles[j];
-      var dist = Math.sqrt(numeric.sum(numeric.pow(numeric.sub(p1.x, p2.x), [2, 2, 2])));
-      if (dist <= (p1.r + p2.r)) {
-        return true;
-      }
-    }
-  }
-  return false;
-};
-
 RB.prototype.join = function(rbs) {
   // We need to compute new center of mass
-  var pos = numeric.mul(this.x, this.getMass());
+  var pos = [0, 0, 0];
 
+  // First we will take all ORIGINAL rigid body particles
+  for (var p in this.particles) {
+    var particle = this.particles[p];
+    // pos += position * mass of particle
+    numeric.addeq(pos, numeric.mul(numeric.add(this.x, particle.bx), particle.mass));
+  }
   for (var rb in rbs) {
-    // We need to take into account also new JOINED rigid body
-    numeric.addeq(pos, numeric.mul(rbs[rb].x, rbs[rb].getMass()));
+    // We need to take into account also new particles added from JOINED rigid body
+    for (var p in rbs[rb].particles) {
+      var particle = rbs[rb].particles[p];
+      // pos += position * mass of particle
+      numeric.addeq(pos, numeric.mul(numeric.add(particle.bx, rbs[rb].x), particle.mass));
+    }
+    // Add masses of joined bodies
     this.mass += rbs[rb].getMass();
   }
   // Compute new center of mass of this rigid body.
   pos = numeric.div(pos, this.mass);
-	console.log(pos);
 
   // Now we have new center of mass we need to recompute relative
   // positions of particles from original rigid body

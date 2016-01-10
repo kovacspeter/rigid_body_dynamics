@@ -316,8 +316,7 @@ Inspector.prototype.refresh = function(objects){
 				activeParticleID = $(this).find('.particle-container').eq(0).data('id');
 			}
 			$(this).closest('li').remove();
-			if (activeParticleID >= 0) {
-				console.log(activeParticleID);
+			if ((activeParticleID >= 0) && (!$element.find('#particle-container-' + activeParticleID).closest('.rigidBody-container').closest('li').hasClass('active'))) {
 				$element.find('#particle-container-' + activeParticleID).closest('.rigidBody-container').siblings('.toggleSection').click();
 			}
 		}

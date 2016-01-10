@@ -1,4 +1,4 @@
-function Particle(radius, position) {
+function Particle() {
 	// -----------------------------------------------------
 	//     Constant:
 	// this.r;         float    radius
@@ -26,11 +26,8 @@ function Particle(radius, position) {
 	this.force = [0, 0, 0];
 	this.torque = [0, 0, 0];
 	this.bx = undefined;
-	this.setSphere(radius, position, numeric.identity(3));
 }
 Particle.DENSITY = 1 / ((4 / 3) * Math.PI * 1000);		// for r = 10, mass should be = 1
-Particle.LAST_ID = 0;
-
 Particle.prototype.setSphere = function (r, x, R) {
 	this.r = r;
 	this.mass = this.computeMass();
@@ -48,11 +45,8 @@ Particle.prototype.setSphere = function (r, x, R) {
 };
 
 Particle.prototype.draw = function (context, color) {
-	var position = this.x;
-	if (this.rb) {
-		position = numeric.add(this.rb.x, numeric.dot(this.rb.q.normalize().toMatrix(), this.bx))
-	}
-	drawCircle(context, position, this.r, color);
+	// console.log(this.rb.R);
+	drawCircle(context, numeric.add(this.rb.x, numeric.dot(this.rb.q.normalize().toMatrix(), this.bx)), this.r, color);
 };
 
 Particle.prototype.computeAux = function () {

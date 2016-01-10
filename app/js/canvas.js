@@ -15,7 +15,7 @@ function Canvas(canvasElement) {
 }
 Canvas.STATES = {
   NONE: 0,
-  ADDING_PARTICLE: 1,
+  CREATING_RIGIDBODY: 1,
   APPLYING_FORCE: 3
 };
 Canvas.SIZE = {
@@ -40,7 +40,8 @@ Canvas.prototype.createParticle = function(evt) {
   } else if (particleRadius > 100) { //Maximal size of particle
     particleRadius = 100;
   }
-  var particle = new Particle(particleRadius, [this.mouseButtonClickCoords.x, this.mouseButtonClickCoords.y, 0]);
+  var particle = new Particle();
+  particle.setSphere(particleRadius, [this.mouseButtonClickCoords.x, this.mouseButtonClickCoords.y, 0], numeric.identity(3));
   return particle;
 };
 Canvas.prototype.crateRigidBody = function(evt) {
@@ -49,7 +50,7 @@ Canvas.prototype.crateRigidBody = function(evt) {
   // Each particle belongs to some rigid body
   var rb = new RB(particle);
 
-  var overlaping = [];
+  overlaping = [];
   // If bodies are overlaping after creation merge them into one RB
   for (o in this.objects) {
     if (this.objects[o].isOverlap(rb)) {
@@ -62,7 +63,7 @@ Canvas.prototype.crateRigidBody = function(evt) {
   // Delete merged bodies
   var new_objects = [];
   for (o in this.objects) {
-    if (this.objects[o].particles.length > 0) {
+    if (this.objects[o].particles.length != 0) {
       new_objects.push(this.objects[o]);
     }
   }
@@ -88,7 +89,7 @@ Canvas.prototype.applyForce = function(evt) {
 
 Canvas.prototype.act = function(evt) {
   switch (this.state) {
-    case Canvas.STATES.ADDING_PARTICLE:
+    case Canvas.STATES.CREATING_RIGIDBODY:
       this.crateRigidBody(evt);
       break;
 
@@ -127,7 +128,7 @@ Canvas.prototype.initMouseListeners = function() {
 
   this.canvasElement.mousemove(function(evt) {
     if (this.mouseButtonPressed) {
-      if (this.state === Canvas.STATES.ADDING_PARTICLE) {
+      if (this.state === Canvas.STATES.CREATING_RIGIDBODY) {
         var particle = this.createParticle(evt);
         this.render(0);
         particle.draw(this.context, 'black');
@@ -144,6 +145,5 @@ Canvas.prototype.initMouseListeners = function() {
     this.act(evt);
     Canvas.state = Canvas.STATES.NONE;
     this.mouseButtonPressed = false;
-		App.resetButtons();
   }.bind(this));
 };

@@ -16,23 +16,20 @@ App.prototype.initControls = function(where) {
 
   var states = Canvas.STATES;
 
-  this.createButton(where, 'Add particle', 'plus', 'addParticle', function() {
-    this.canvas.state = states.ADDING_PARTICLE;
+  this.createButton(where, 'Create Rigid Body', 'createRigidBody', function() {
+    this.canvas.state = states.CREATING_RIGIDBODY;
   }.bind(this));
 
-  this.createButton(where, 'Apply Force', 'hand-right', 'applyForce', function() {
+  this.createButton(where, 'Apply Force', 'applyForce', function() {
     this.canvas.state = states.APPLYING_FORCE;
   }.bind(this));
 };
 
-App.prototype.createButton = function(where, text, icon, id, clickFunction){
+App.prototype.createButton = function(where, text, id, func){
   var button = $("<button/>", {
     id: id,
-    html: '<i class="glyphicon glyphicon-'+icon+'"></i> ' + text,
-    click: function(){
-			clickFunction();
-			$(this).addClass('active');
-		}
+    text: text,
+    click: func
   });
 
   where.append(button);
@@ -50,9 +47,4 @@ App.prototype.run = function() {
 	this.objectInspector.refresh(this.canvas.objects);
 
 	window.requestAnimationFrame(this.run.bind(this));
-};
-
-/* GLOBAL METHODS */
-App.resetButtons = function() {
-	$('#menu').find('button').removeClass('active');
 };

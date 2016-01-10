@@ -5,21 +5,23 @@ function Canvas(canvasElement) {
 	this.canvasElement = canvasElement;
 	this.context = this.canvasElement[0].getContext("2d");
 	this.mouseButtonPressed = false;
-	this.mouseButtonClickCoords = {x: 0, y: 0};
+	this.mouseButtonClickCoords = {
+		x: 0,
+		y: 0
+	};
 
 	/* Call init methods */
 	this.initMouseListeners();
 }
-
 Canvas.STATES = {
 	NONE: 0,
-	CREATING_RIGIDBODY: 1,
-	MOVING_RIGIDBODY: 2,
-	APPLYING_FORCE: 3,
-	DELETING_RIGIDBODY: 4
+	ADDING_PARTICLE: 1,
+	APPLYING_FORCE: 3
 };
-Canvas.SIZE = {WIDTH: 800, HEIGHT: 600};
-Canvas.NUM_STEPS = 1;
+Canvas.SIZE = {
+	WIDTH: 800,
+	HEIGHT: 600
+};
 
 Canvas.prototype.setMouseButtonClickCoords = function (evt) {
 	this.mouseButtonClickCoords.x = evt.pageX - this.canvasElement.offset().left;
@@ -32,72 +34,59 @@ Canvas.prototype.createParticle = function (evt) {
 
 	//setRadius of new Particle
 	var particleRadius = numeric.norm2(mouseVector);
-	if (particleRadius < 10) {	//Minimal size of particle
+	if (particleRadius < 10) { //Minimal size of particle
 		particleRadius = 10;
-	}
-	else if (particleRadius > 100) {	//Maximal size of particle
+	} else if (particleRadius > 100) { //Maximal size of particle
 		particleRadius = 100;
 	}
-	var particle = new Particle();
-	particle.setSphere(10, [this.mouseButtonClickCoords.x, this.mouseButtonClickCoords.y, 0], numeric.identity(3));
+	var particle = new Particle(particleRadius, [this.mouseButtonClickCoords.x, this.mouseButtonClickCoords.y, 0]);
 	return particle;
 };
 Canvas.prototype.crateRigidBody = function (evt) {
+	// First create particle
 	var particle = this.createParticle(evt);
+	// Each particle belongs to some rigid body
 	var rb = new RB(particle);
-	var isOverlap = false;
+	var overlaping = [];
+	// If bodies are overlaping after creation merge them into one RB
 	for (o in this.objects) {
 		if (this.objects[o].isOverlap(rb)) {
-			this.objects[o].join(rb);
-			isOverlap = true;
+			overlaping.push(this.objects[o]);
 		}
 	}
-	if (!isOverlap) {
-		this.objects.push(rb);
+
+	rb.join(overlaping);
+
+	// Delete merged bodies
+	var new_objects = [];
+	for (o in this.objects) {
+		if (this.objects[o].particles.length > 0) {
+			new_objects.push(this.objects[o]);
+		}
 	}
+	this.objects = new_objects;
+	// Put new (possibly merged) object into objects
+	this.objects.push(rb);
 };
-
-Canvas.prototype.moveRigidBody = function (evt) {
-	// body...
-};
-
 Canvas.prototype.applyForce = function (evt) {
 	var x = evt.pageX - this.canvasElement.offset().left
 	var y = evt.pageY - this.canvasElement.offset().top
 	for (i in this.objects) {
-		var particle = this.objects[i].getParticle(x, y, 0);
+		var object = this.objects[i];
+		var particle = object.getParticle(this.mouseButtonClickCoords.x, this.mouseButtonClickCoords.y, 0);
 		if (particle != null) {
-			// particle.applyForce([0.05, 0.05, 0]);
-			this.objects[i].applyForce([0.05, 0.05, 0]);
-		}
-	}
-};
-
-Canvas.prototype.deleteRigidBody = function (evt) {
-	//TODO prerobit aktualne nefunguje
-	var x = evt.pageX - this.canvasElement.offset().left
-	var y = evt.pageY - this.canvasElement.offset().top
-	var pos = new Position(x, y, 0);
-	for (i in this.objects) {
-		if (this.objects[i].isInSphere(pos)) {
-			this.objects.splice(i, 1);
-			break;
+			//set Force vector
+			var force = [this.mouseButtonClickCoords.x - x, this.mouseButtonClickCoords.y - y, 0];
+			force = numeric.div(force, 100 / object.getMass());
+			object.applyForce(force);
 		}
 	}
 };
 
 Canvas.prototype.act = function (evt) {
 	switch (this.state) {
-		case Canvas.STATES.CREATING_RIGIDBODY:
+		case Canvas.STATES.ADDING_PARTICLE:
 			this.crateRigidBody(evt);
-			break;
-
-		case Canvas.STATES.MOVING_RIGIDBODY:
-			this.moveRigidBody(evt);
-			break;
-
-		case Canvas.STATES.DELETING_RIGIDBODY:
-			this.deleteRigidBody(evt);
 			break;
 
 		case Canvas.STATES.APPLYING_FORCE:
@@ -111,19 +100,16 @@ Canvas.prototype.act = function (evt) {
 
 	this.state = null;
 };
-
+Canvas.prototype.update = function () {
+	for (var o in this.objects) {
+		var obj = this.objects[o];
+		obj.update();
+	}
+};
 Canvas.prototype.render = function (dt) {
-
-	var dt2 = dt / Canvas.NUM_STEPS;
-	for (var j = 0; j < Canvas.NUM_STEPS; j++) {
-		for (var o in this.objects) {
-			var obj = this.objects[o];
-			obj.update(dt2);
-		} //TODO collision here
-		this.context.clearRect(0, 0, this.canvasElement[0].width, this.canvasElement[0].height);
-		for (var i = 0; i < this.objects.length; i++) {
-			this.objects[i].draw(this.context, 'black');
-		}
+	this.context.clearRect(0, 0, this.canvasElement[0].width, this.canvasElement[0].height);
+	for (var i = 0; i < this.objects.length; i++) {
+		this.objects[i].draw(this.context, 'black');
 	}
 };
 
@@ -135,10 +121,15 @@ Canvas.prototype.initMouseListeners = function () {
 
 	this.canvasElement.mousemove(function (evt) {
 		if (this.mouseButtonPressed) {
-			if (this.state === Canvas.STATES.CREATING_RIGIDBODY) {
+			if (this.state === Canvas.STATES.ADDING_PARTICLE) {
 				var particle = this.createParticle(evt);
-				this.render(0);
+				this.render();
 				particle.draw(this.context, 'black');
+			} else if (this.state === Canvas.STATES.APPLYING_FORCE) {
+				var x = evt.pageX - this.canvasElement.offset().left
+				var y = evt.pageY - this.canvasElement.offset().top
+				this.render(0);
+				drawLine(this.context, [x, y], [this.mouseButtonClickCoords.x, this.mouseButtonClickCoords.y], '#0000aa', 2);
 			}
 		}
 	}.bind(this));
@@ -147,5 +138,6 @@ Canvas.prototype.initMouseListeners = function () {
 		this.act(evt);
 		Canvas.state = Canvas.STATES.NONE;
 		this.mouseButtonPressed = false;
+		App.resetButtons();
 	}.bind(this));
 };
