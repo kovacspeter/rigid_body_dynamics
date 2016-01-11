@@ -32,7 +32,8 @@ function RB(particle) {
 	this.P = [0, 0, 0];
 	this.v = [0, 0, 0];
 	this.Ek = 0;
-	//this.updateBodyInertia();
+	this.updateBodyInertia();
+	this.computeAux();
 	this.ID = ++RB.LAST_ID;
 	particle.rb = this;
 	particle.ID = ++Particle.LAST_ID;
@@ -41,8 +42,8 @@ function RB(particle) {
 RB.LAST_ID = 0;
 
 RB.prototype.computeAux = function () {
-	this.P = numeric.mul(this.getVelocity(), this.getMass());
-	/*
+	// Computes linear velocity
+  this.v = numeric.div(this.P, this.getMass());
 	// Gets rotation matrix from quaternion
 	this.R = this.q.normalize().toMatrix();
 	this.Iinv = numeric.dot(numeric.dot(this.R, this.Ibodyinv), numeric.transpose(this.R));
@@ -50,7 +51,6 @@ RB.prototype.computeAux = function () {
 	this.omega = numeric.dot(this.Iinv, this.L);
 	this.force = [0, 0, 0];
 	this.torque = [0, 0, 0];
-	*/
 };
 
 RB.prototype.computeCollisions = function () {
@@ -59,39 +59,22 @@ RB.prototype.computeCollisions = function () {
 		var particle = this.particles[i];
 		var particlePosition = particle.getPosition();
 		if (particlePosition[0] < particle.r) {
-			this.v[0] = Math.abs(this.v[0]);
+			this.P[0] = Math.abs(this.P[0]);
 		} else if (particlePosition[0] > Canvas.SIZE.WIDTH - particle.r) {
-			this.v[0] = -Math.abs(this.v[0]);
+			this.P[0] = -Math.abs(this.P[0]);
 		}
 
 		if (particlePosition[1] < particle.r) {
-			this.v[1] = Math.abs(this.v[1]);
+			this.P[1] = Math.abs(this.P[1]);
 		} else if (particlePosition[1] > Canvas.SIZE.HEIGHT - particle.r) {
-			this.v[1] = -Math.abs(this.v[1]);
+			this.P[1] = -Math.abs(this.P[1]);
 		}
-		// if (particle.x[0] < particle.r) {
-		//   particle.applyForce([0, Math.abs(particle.P[0]), 0]);
-		//   particle.P[0] = 0;
-		// } else if (particle.x[0] > Canvas.SIZE.WIDTH - particle.r) {
-		//   particle.applyForce([0, -Math.abs(particle.P[0]), 0]);
-		//   particle.P[0] = 0;
-		// }
-		//
-		// if (particle.x[1] < particle.r) {
-		//   particle.applyForce([0, Math.abs(particle.P[1]), 0]);
-		//   particle.P[1] = 0;
-		// } else if (particle.x[1] > Canvas.SIZE.HEIGHT - particle.r) {
-		//   particle.applyForce([0, -Math.abs(particle.P[1]), 0]);
-		//   particle.P[1] = 0;
-		// }
 	}
 };
 
-RB.prototype.integrateEuler = function (dt) {
-	diff = numeric.mul(this.v, dt)
-
+RB.prototype.integrateEuler = function () {
 	// Equations of motion
-	numeric.addeq(this.x, diff);
+	numeric.addeq(this.x, this.v);
 	// ROTATION MATRIX IMPELem
 	//numeric.addeq(this.R, numeric.dot(this.getCrossMatrix(this.omega), this.R));
 	//NOTE: vsade pisu ze to ma byt 0 nie 1, zeby bol dakde bug?
@@ -101,8 +84,8 @@ RB.prototype.integrateEuler = function (dt) {
 	// this.q = this.q.smult(0.5).vmult(this.omega);
 	// this.q = this.q.normalize();
 	// console.log(this.q.v, this.q.s);
-	numeric.addeq(this.P, numeric.mul(this.force, dt));
-	numeric.addeq(this.L, numeric.mul(this.torque, dt));
+	numeric.addeq(this.P, this.force);
+	numeric.addeq(this.L, this.torque);
 	//console.log(this.P);
 	//console.log(this.L);
 };
@@ -126,6 +109,7 @@ RB.prototype.move = function () {
 };
 
 RB.prototype.update = function () {
+	/*
 	//this.integrateEuler(dt);
 	this.move();
 	// this.renormalizeR();
@@ -135,6 +119,11 @@ RB.prototype.update = function () {
 	for (i in this.particles) {
 		this.particles[i].update();
 	}
+	*/
+	this.integrateEuler();
+  this.computeAux();
+  // this.renormalizeR();
+  this.computeCollisions();
 };
 
 RB.prototype.updateTorque = function () {
@@ -156,6 +145,16 @@ RB.prototype.applyForce = function (force, whichParticle) {
 	for (var p in this.particles) {
 		this.particles[p].applyForce(force, whichParticle);
 	}	
+};
+
+RB.prototype.updateForce = function() {
+  var force = [0, 0, 0];
+  for (var p in this.particles) {
+    var particle = this.particles[p];
+    numeric.addeq(force, particle.force);
+    particle.force = [0, 0, 0];
+  }
+  this.force = force;
 };
 
 RB.prototype.updateBodyInertia = function () {
@@ -279,7 +278,7 @@ RB.prototype.join = function (rbs) {
 	}
 	// Assign new center of mass to this rigid body.
 	this.x = pos;
-	//this.updateBodyInertia();
+	this.updateBodyInertia();
 	this.computeAux();
 };
 // NOTE: DELETE WHEN QUATERNIONS WORK

@@ -81,7 +81,8 @@ Canvas.prototype.applyForce = function (evt) {
 			var force = [this.mouseButtonClickCoords.x - x, this.mouseButtonClickCoords.y - y, 0];
 			// var force = [1,1,0];
 			force = numeric.div(force, 100 / object.getMass());
-			object.applyForce(force, particle);
+			//object.applyForce(force, particle);
+			particle.applyForce(force);
 		}
 	}
 };

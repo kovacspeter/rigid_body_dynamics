@@ -24,6 +24,7 @@ function Particle(radius, position) {
 	// this.torque;    float3
 	// -----------------------------------------------------
 	this.rb = undefined;
+	this.force = [0, 0, 0];
 	this.torque = [0, 0, 0];
 	this.omega = [0, 0, 0];
 	this.bx = [0, 0, 0];
@@ -47,6 +48,7 @@ Particle.prototype.setSphere = function (r) {
 		[0, 0, 2 * this.mass * Math.pow(this.r, 2) / 5]
 	];
 	this.Ibodyinv = numeric.inv(this.Ibody);
+	this.computeAux();
 };
 
 Particle.prototype.draw = function (context, color) {
@@ -59,17 +61,17 @@ Particle.prototype.drawCentre = function (context) {
 };
 
 Particle.prototype.computeAux = function () {
-	//this.Iinv = numeric.dot(numeric.dot(this.R, this.Ibodyinv), numeric.transpose(this.R));
-	//this.omega = numeric.dot(this.Iinv, this.L);
+	this.v = numeric.div(this.P, this.mass);
+	this.Iinv = numeric.dot(numeric.dot(this.R, this.Ibodyinv), numeric.transpose(this.R));
+	this.omega = numeric.dot(this.Iinv, this.L);
+
 	/*
-	 this.P = numeric.mul(this.rb.getVelocity(), this.getMass());
-	 this.v = numeric.mul(this.rb.omega, this.getDistanceFromCenterOfMass());
-	 */
 	// I = m*(DistanceFromCenterOfRotation)^2
 	var r = this.getDistanceFromCenterOfMass();
 	this.I = this.getMass() * r * r;
 
 	this.L = numeric.mul(this.omega, this.I);
+	*/
 };
 
 Particle.prototype.computeMass = function () {
@@ -99,7 +101,7 @@ Particle.prototype.getMomentum = function () {
 };
 Particle.prototype.getPosition = function () {
 	if (this.rb) {
-		return numeric.add(this.rb.x, this.bx);
+		return numeric.add(this.rb.x, numeric.dot(this.rb.q.normalize().toMatrix(), this.bx))
 	} else {
 		return this.x;
 	}
@@ -153,14 +155,14 @@ Particle.prototype.normalize = function (v) {
 	v[2] /= l;
 };
 
-Particle.prototype.integrateEuler = function (dt) {
+Particle.prototype.integrateEuler = function () {
 
-	numeric.addeq(this.x, numeric.mul(this.v, dt));
+	numeric.addeq(this.x, this.v);
 	var m = numeric.dot(this.getCrossMatrix(this.omega), this.R);
-	numeric.addeq(this.R, numeric.mul(m, dt));
+	numeric.addeq(this.R, m);
 
-	numeric.addeq(this.P, numeric.mul(this.force, dt));
-	numeric.addeq(this.L, numeric.mul(this.torque, dt));
+	numeric.addeq(this.P, this.force);
+	numeric.addeq(this.L, this.torque);
 	this.v = numeric.div(this.P, this.mass);
 
 	// if (this.x[0] < this.r) {
@@ -207,8 +209,8 @@ Particle.prototype.renormalizeR = function () {
 };
 
 Particle.prototype.update = function () {
-	this.computeAux();
-	this.move();
+	//this.computeAux();
+	//this.move();
 };
 
 Particle.prototype.isInside = function (x, y, z) {
@@ -219,12 +221,15 @@ Particle.prototype.isInside = function (x, y, z) {
 	return this.r - Math.sqrt(sum) >= 0;
 };
 
-Particle.prototype.applyForce = function (force, whichParticle) {
+Particle.prototype.applyForce = function(force) { //(force, whichParticle) {
+	/*
 	 var r = numeric.dot(whichParticle.getPosition(), this.getPosition());
 	 var alpha = numeric.div(numeric.mul(force, r), this.I);
 	 this.omega = alpha;	// #DISCUSS: tu sa môže aj pripočítavať k aktuálnej uhlovej rýchlosti!!!
 	 this.L = numeric.mul(this.omega, this.I);
-	//numeric.addeq(this.rb.torque, numeric.dot(this.getCrossMatrix(numeric.sub(this.bx, this.rb.x)), force));
+	 */
+	numeric.addeq(this.rb.force, force);
+	numeric.addeq(this.rb.torque, numeric.dot(this.getCrossMatrix(numeric.sub(this.bx, this.rb.x)), force));
 };
 
 function pinv(A) {

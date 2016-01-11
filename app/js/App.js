@@ -1,7 +1,6 @@
 function init(canvasID, menuID, inspectorID) {
 	new App($('#' + canvasID), $('#' + menuID), $('#' + inspectorID));
-}
-;
+};
 
 function App($canvasElement, $menu, $inspector) {
 	this.menu = $menu;
@@ -10,8 +9,7 @@ function App($canvasElement, $menu, $inspector) {
 	this.control = this.initControls(this.menu);
 	this.objectInspector = new Inspector($inspector);
 	this.run();
-}
-;
+};
 
 App.prototype.initControls = function (where) {
 
