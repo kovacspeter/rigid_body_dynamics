@@ -14,7 +14,7 @@ function RB(particle) {
 	//     Derived:
 	// this.Iinv;      matrix3
 	// this.v;         float3
-	// this.omega;     float3
+	// this.omega;     float3		Angular velocity
 	// -----------------------------------------------------
 	//     Computed:
 	// this.force;     float3
@@ -31,6 +31,7 @@ function RB(particle) {
 	this.mass = particle.getMass();
 	this.P = [0, 0, 0];
 	this.v = [0, 0, 0];
+	this.Ek = 0;
 	//this.updateBodyInertia();
 	this.ID = ++RB.LAST_ID;
 	particle.rb = this;
@@ -118,6 +119,10 @@ RB.prototype.draw = function (context, color) {
 
 RB.prototype.move = function () {
 	numeric.addeq(this.x, this.v);
+	
+	for (var p in this.particles) {
+		this.particles[p].move();
+	}
 };
 
 RB.prototype.update = function () {
@@ -142,10 +147,15 @@ RB.prototype.updateTorque = function () {
 	this.torque = torque;
 };
 
-RB.prototype.applyForce = function (force) {
+RB.prototype.applyForce = function (force, whichParticle) {
 	var a = numeric.div(force, this.getMass());
-	this.v = a;
+	this.v = a;	// #DISCUSS: tu sa môže aj pripočítavať k aktuálnej rýchlosti!!!
 	this.P = numeric.mul(this.v, this.getMass());
+	
+	force = numeric.div(force, 10000);
+	for (var p in this.particles) {
+		this.particles[p].applyForce(force, whichParticle);
+	}	
 };
 
 RB.prototype.updateBodyInertia = function () {
@@ -202,6 +212,13 @@ RB.prototype.getCrossMatrix = function (vec) {
 };
 RB.prototype.getForce = function () {
 	return this.force;
+};
+RB.prototype.getKineticEnergy = function() {
+	var Ek = 0;
+	for (var p in this.particles) {
+		Ek += this.particles[p].getKineticEnergy();
+	}
+	return Ek;
 };
 RB.prototype.getMass = function () {
 	return this.mass;
@@ -262,7 +279,7 @@ RB.prototype.join = function (rbs) {
 	}
 	// Assign new center of mass to this rigid body.
 	this.x = pos;
-	this.updateBodyInertia();
+	//this.updateBodyInertia();
 	this.computeAux();
 };
 // NOTE: DELETE WHEN QUATERNIONS WORK

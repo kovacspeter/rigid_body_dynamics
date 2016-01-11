@@ -14,22 +14,24 @@ function Particle(radius, position) {
 	// this.L;         float3    Angular momentum = I omega
 	// -----------------------------------------------------
 	//     Derived:
+	// this.I					 float3		Moment of Inertia
 	// this.Iinv;      matrix3
-	// this.v;         float3		--> #DISCUSS: IS velocity of the particle really needed?
-	// this.omega;     float3
+	// this.v;         float3
+	// this.omega;     float3		--> #DISCUSS: IS angular velocity of the particle really needed?
 	// -----------------------------------------------------
 	//     Computed:
 	// this.force;     float3
 	// this.torque;    float3
 	// -----------------------------------------------------
 	this.rb = undefined;
-	this.force = [0, 0, 0];
 	this.torque = [0, 0, 0];
+	this.omega = [0, 0, 0];
 	this.bx = [0, 0, 0];
 	this.x = position;
 	this.R = numeric.identity(3);
 	this.P = [0, 0, 0];
 	this.L = [0, 0, 0];
+	this.I = 0;
 	this.setSphere(radius, position);
 	this.computeAux();
 }
@@ -48,22 +50,26 @@ Particle.prototype.setSphere = function (r) {
 };
 
 Particle.prototype.draw = function (context, color) {
-	var position = this.x;
-	if (this.rb) {
-		position = numeric.add(this.rb.x, numeric.dot(this.rb.q.normalize().toMatrix(), this.bx));
-	}
-	drawCircle(context, position, this.r, color);
+	drawCircle(context, this.getPosition(), this.r, color);
 };
 
-Particle.prototype.drawCentre = function(context) {
+Particle.prototype.drawCentre = function (context) {
 	drawX(context, this.getPosition(), 6, '#777');
 	drawLine(context, this.rb.getPosition(), this.getPosition(), '#222', 1);
 };
 
 Particle.prototype.computeAux = function () {
-	this.v = numeric.div(this.P, this.mass);
-	this.Iinv = numeric.dot(numeric.dot(this.R, this.Ibodyinv), numeric.transpose(this.R));
-	this.omega = numeric.dot(this.Iinv, this.L);
+	//this.Iinv = numeric.dot(numeric.dot(this.R, this.Ibodyinv), numeric.transpose(this.R));
+	//this.omega = numeric.dot(this.Iinv, this.L);
+	/*
+	 this.P = numeric.mul(this.rb.getVelocity(), this.getMass());
+	 this.v = numeric.mul(this.rb.omega, this.getDistanceFromCenterOfMass());
+	 */
+	// I = m*(DistanceFromCenterOfRotation)^2
+	var r = this.getDistanceFromCenterOfMass();
+	this.I = this.getMass() * r * r;
+
+	this.L = numeric.mul(this.omega, this.I);
 };
 
 Particle.prototype.computeMass = function () {
@@ -78,6 +84,12 @@ Particle.prototype.getCrossMatrix = function (vec) {
 		[-vec[1], vec[0], 0]
 	];
 	return vecx;
+};
+Particle.prototype.getDistanceFromCenterOfMass = function () {
+	return Math.sqrt(this.bx[0] * this.bx[0] + this.bx[1] * this.bx[1] + this.bx[2] * this.bx[2]);
+};
+Particle.prototype.getKineticEnergy = function () {
+	return (this.I * (this.rb.omega[0] * this.rb.omega[0] + this.rb.omega[1] * this.rb.omega[1])) / 2;
 };
 Particle.prototype.getMass = function () {
 	return this.mass;
@@ -97,6 +109,41 @@ Particle.prototype.getRadius = function () {
 };
 Particle.prototype.getVelocity = function () {
 	return this.v;
+};
+
+// #DISCUSS: Actually it's not move, but rotate!!!
+Particle.prototype.move = function () {
+	var r = this.getDistanceFromCenterOfMass();
+	if (r > 0) {
+		var theta = Math.acos(this.bx[0] / r);
+		
+		if (Math.asin(this.bx[1] / r) > 0) {
+			theta = -theta;
+		}
+		theta += this.omega[0];
+		if (theta > Math.PI) {
+			theta = -Math.PI + (theta - Math.PI);
+		} 
+		
+		console.log(theta);
+		if ((theta <= Math.PI) && (theta > (Math.PI/2))) {
+			this.bx[0] = r * (Math.cos(theta));
+			this.bx[1] = -r * Math.sin(theta);
+			console.log("HERE 1");
+		} else if ((theta <= (Math.PI/2)) && (theta > 0)) {
+			this.bx[0] = r * Math.cos(theta);
+			this.bx[1] = -r * Math.sin(theta);
+			console.log("HERE 2");
+		} else if((theta <= 0) && (theta > (-Math.PI/2))) {
+			this.bx[0] = r * Math.cos(theta);
+			this.bx[1] = r * (-Math.sin(theta));
+			console.log("HERE 3");
+		} else {
+			this.bx[0] = r * (Math.cos(theta));
+			this.bx[1] = r * (-Math.sin(theta));
+			console.log("HERE 4");
+		}
+	}
 };
 
 Particle.prototype.normalize = function (v) {
@@ -160,8 +207,8 @@ Particle.prototype.renormalizeR = function () {
 };
 
 Particle.prototype.update = function () {
-	this.P = numeric.mul(this.rb.getVelocity(), this.getMass());
-	//this.move(dt);
+	this.computeAux();
+	this.move();
 };
 
 Particle.prototype.isInside = function (x, y, z) {
@@ -172,8 +219,11 @@ Particle.prototype.isInside = function (x, y, z) {
 	return this.r - Math.sqrt(sum) >= 0;
 };
 
-Particle.prototype.applyForce = function (force) {
-	numeric.addeq(this.force, force);
+Particle.prototype.applyForce = function (force, whichParticle) {
+	 var r = numeric.dot(whichParticle.getPosition(), this.getPosition());
+	 var alpha = numeric.div(numeric.mul(force, r), this.I);
+	 this.omega = alpha;	// #DISCUSS: tu sa môže aj pripočítavať k aktuálnej uhlovej rýchlosti!!!
+	 this.L = numeric.mul(this.omega, this.I);
 	//numeric.addeq(this.rb.torque, numeric.dot(this.getCrossMatrix(numeric.sub(this.bx, this.rb.x)), force));
 };
 
@@ -189,4 +239,5 @@ function pinv(A) {
 			Sinv[i] = 0;
 	}
 	return numeric.dot(numeric.dot(V, numeric.diag(Sinv)), numeric.transpose(U));
-};
+}
+;
