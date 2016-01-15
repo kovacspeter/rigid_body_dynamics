@@ -79,8 +79,9 @@ Canvas.prototype.applyForce = function (evt) {
 		if (particle != null) {
 			//set Force vector
 			var force = [this.mouseButtonClickCoords.x - x, this.mouseButtonClickCoords.y - y, 0];
-			// var force = [1,1,0];
-			force = numeric.div(force, 100 / object.getMass());
+			// var force = [1,0,0];
+			// force = numeric.div(force, 100 / object.getMass()); // KONSTANTA ???
+			force = numeric.div(force, object.getMass());
 			//object.applyForce(force, particle);
 			particle.applyForce(force);
 		}

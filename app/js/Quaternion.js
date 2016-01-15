@@ -3,18 +3,14 @@ function Quaternion(v, s) {
   this.s = s;
 }
 
-Quaternion.prototype.getQ = function() {
 
-}
+Quaternion.prototype.mul = function (r) {
+  var new_s = this.s*r.s - numeric.dot(this.v, r.v);
+  var i = r.s*this.v[0] + r.v[0]*this.s - r.v[1]*this.v[2] + r.v[2]*this.v[1]
+  var j = r.s*this.v[1] + r.v[0]*this.v[2] - r.v[1]*this.s + r.v[2]*this.v[0]
+  var k = r.s*this.v[2] + r.v[0]*this.v[1] - r.v[1]*this.v[0] + r.v[2]*this.s
 
-Quaternion.prototype.mul = function (q) {
-  var new_s = this.s*q.s - numeric.dot(this.v, q.v);
-  var v1 = numeric.mul(this.s, q.v);
-  var v2 = numeric.mul(q.s, this.v);
-  var v3 = numeric.dot(this.getCrossMatrix(this.v), q.v);
-  var new_v = numeric.add(numeric.add(v1, v2), v3);
-
-  return new Quaternion(new_v, new_s);
+  return new Quaternion([i,j,k], new_s);
 };
 
 Quaternion.prototype.smult = function (scalar) {
@@ -24,17 +20,6 @@ Quaternion.prototype.smult = function (scalar) {
   this.s =  this.s * scalar;
 
   return this;
-};
-
-Quaternion.prototype.vmult = function(v){
-  var x = this.s*v[0] - this.v[2]*v[1] + this.v[1]*v[2];
-  var y = this.v[2]*v[0] + this.s*v[1] - this.v[0]*v[2];
-  var z = -this.v[1]*v[0] + this.v[0]*v[1] + this.s*v[2];
-  var s = -this.v[0]*v[0] - this.v[1]*v[1] - this.v[2]*v[2];
-
-  var quat = new Quaternion([x, y, z], s);
-
-  return quat;
 };
 
 Quaternion.prototype.getCrossMatrix = function(vec) {
@@ -47,7 +32,7 @@ Quaternion.prototype.getCrossMatrix = function(vec) {
 };
 
 Quaternion.prototype.normalize = function(){
-  var l = Math.sqrt(this.v[0]*this.v[0]+this.v[1]*this.v[1]+this.v[2]*this.v[2]+this.s*this.s);
+  var l = Math.sqrt(this.v[0]*this.v[0] + this.v[1]*this.v[1] + this.v[2]*this.v[2] + this.s*this.s);
   if (l == 0) {
     return new Quaternion([0, 0, 0], 1);
   }

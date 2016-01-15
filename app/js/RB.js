@@ -49,8 +49,6 @@ RB.prototype.computeAux = function () {
 	this.Iinv = numeric.dot(numeric.dot(this.R, this.Ibodyinv), numeric.transpose(this.R));
 	// Computes angular velocity
 	this.omega = numeric.dot(this.Iinv, this.L);
-	this.force = [0, 0, 0];
-	this.torque = [0, 0, 0];
 };
 
 RB.prototype.computeCollisions = function () {
@@ -75,17 +73,14 @@ RB.prototype.computeCollisions = function () {
 RB.prototype.integrateEuler = function () {
 	// Equations of motion
 	numeric.addeq(this.x, this.v);
-	// ROTATION MATRIX IMPELem
-	//numeric.addeq(this.R, numeric.dot(this.getCrossMatrix(this.omega), this.R));
 	//NOTE: vsade pisu ze to ma byt 0 nie 1, zeby bol dakde bug?
 	var q = new Quaternion(this.omega, 1);
-	this.q = q.mul(this.q).smult(0.5);
-	this.q = this.q.normalize();
-	// this.q = this.q.smult(0.5).vmult(this.omega);
-	// this.q = this.q.normalize();
-	// console.log(this.q.v, this.q.s);
+	this.q = this.q.mul(q).smult(0.5)
 	numeric.addeq(this.P, this.force);
 	numeric.addeq(this.L, this.torque);
+
+	this.force = [0, 0, 0];
+	this.torque = [0, 0, 0];
 	//console.log(this.P);
 	//console.log(this.L);
 };
@@ -99,64 +94,18 @@ RB.prototype.draw = function (context, color) {
 	}
 	drawX(context, this.x, 8, '#999');
 };
-
 RB.prototype.move = function () {
 	numeric.addeq(this.x, this.v);
-	
+
 	for (var p in this.particles) {
 		this.particles[p].move();
 	}
 };
-
 RB.prototype.update = function () {
-	/*
-	//this.integrateEuler(dt);
-	this.move();
-	// this.renormalizeR();
-	this.computeCollisions();
 	this.computeAux();
-	// update position, momentum, ... of the object's particles
-	for (i in this.particles) {
-		this.particles[i].update();
-	}
-	*/
 	this.integrateEuler();
-  this.computeAux();
-  // this.renormalizeR();
   this.computeCollisions();
 };
-
-RB.prototype.updateTorque = function () {
-	var torque = [0, 0, 0];
-	for (var p in this.particles) {
-		var particle = this.particles[p];
-		numeric.addeq(torque, particle.torque);
-		particle.force = [0, 0, 0];
-	}
-	this.torque = torque;
-};
-
-RB.prototype.applyForce = function (force, whichParticle) {
-	var a = numeric.div(force, this.getMass());
-	this.v = a;	// #DISCUSS: tu sa môže aj pripočítavať k aktuálnej rýchlosti!!!
-	this.P = numeric.mul(this.v, this.getMass());
-	
-	force = numeric.div(force, 10000);
-	for (var p in this.particles) {
-		this.particles[p].applyForce(force, whichParticle);
-	}	
-};
-
-RB.prototype.updateForce = function() {
-  var force = [0, 0, 0];
-  for (var p in this.particles) {
-    var particle = this.particles[p];
-    numeric.addeq(force, particle.force);
-    particle.force = [0, 0, 0];
-  }
-  this.force = force;
-};
-
 RB.prototype.updateBodyInertia = function () {
 	var J = [
 		[0, 0, 0],
@@ -183,7 +132,6 @@ RB.prototype.updateBodyInertia = function () {
 	// Actual Inertia tensor of rigid body.
 	this.Ibodyinv = pinv(J);
 };
-
 RB.prototype.isOverlap = function (rb) {
 	for (var i in this.particles) {
 		p1 = this.particles[i];
@@ -197,7 +145,6 @@ RB.prototype.isOverlap = function (rb) {
 	}
 	return false;
 };
-
 RB.prototype.getAcceleration = function () {
 	return numeric.mul(this.force, 1 / this.mass);
 };
@@ -280,28 +227,4 @@ RB.prototype.join = function (rbs) {
 	this.x = pos;
 	this.updateBodyInertia();
 	this.computeAux();
-};
-// NOTE: DELETE WHEN QUATERNIONS WORK
-RB.prototype.normalize = function (v) {
-	var l = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-	v[0] /= l;
-	v[1] /= l;
-	v[2] /= l;
-};
-RB.prototype.renormalizeR = function () {
-	var v0 = [this.R[0][0], this.R[1][0], this.R[2][0]];
-	this.normalize(v0);
-	var v1 = [this.R[0][1], this.R[1][1], this.R[2][1]];
-	this.normalize(v1);
-	var v2 = numeric.dot(this.getCrossMatrix(v0), v1);
-	v1 = numeric.dot(this.getCrossMatrix(v2), v0);
-	this.R[0][0] = v0[0];
-	this.R[0][1] = v1[0];
-	this.R[0][2] = v2[0];
-	this.R[1][0] = v0[1];
-	this.R[1][1] = v1[1];
-	this.R[1][2] = v2[1];
-	this.R[2][0] = v0[2];
-	this.R[2][1] = v1[2];
-	this.R[2][2] = v2[2];
 };
