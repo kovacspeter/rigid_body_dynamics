@@ -47,11 +47,11 @@ Quaternion.prototype.toMatrix = function(q) {
   var x11 = 1 - 2*v[1]*v[1] - 2*v[2]*v[2];
   var x12 = 2*v[0]*v[1] - 2*s*v[2];
   var x13 = 2*v[0]*v[2] + 2*v[1]*s;
-  var x21 = x12;
+  var x21 = 2*v[0]*v[1] + 2*s*v[2];
   var x22 = 1 - 2*v[0]*v[0] - 2*v[2]*v[2];
   var x23 = 2*v[2]*v[1] - 2*s*v[0];
-  var x31 = x13;
-  var x32 = x23;
+  var x31 = 2*v[0]*v[2] - 2*v[1]*s;
+  var x32 = 2*v[2]*v[1] + 2*s*v[0];
   var x33 = 1 - 2*v[1]*v[1] - 2*v[0]*v[0];
 
   return [
