@@ -311,3 +311,7 @@ button:hover .glyphicon, button.active .glyphicon {
 	color: #cdcdcd;
 	border: 0;
 }
+
+#inspector div[class^='col'] {
+	padding: 0 5px;
+}
