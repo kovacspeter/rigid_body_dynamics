@@ -21,17 +21,16 @@ function RB(particle) {
 	// this.torque;    float3
 	// -----------------------------------------------------
 	this.particles = [particle];
+	this.x = particle.getPosition();
+	this.mass = particle.getMass();
 	this.force = [0, 0, 0];
 	this.torque = [0, 0, 0];
-	this.L = [0, 0, 0];
 	this.R = numeric.identity(3);
-	this.x = particle.getPosition();
 	this.q = new Quaternion([0, 0, 0], 1);
 	this.omega = [0, 0, 0];
-	this.mass = particle.getMass();
-	this.P = [0, 0, 0];
 	this.v = [0, 0, 0];
 	this.Ek = 0;
+	this.reset();
 	this.updateBodyInertia();
 	this.computeAux();
 	this.ID = ++RB.LAST_ID;
@@ -75,7 +74,7 @@ RB.prototype.integrateEuler = function () {
 	numeric.addeq(this.x, this.v);
 	//NOTE: vsade pisu ze to ma byt 0 nie 1, zeby bol dakde bug?
 	var q = new Quaternion(this.omega, 1);
-	this.q = this.q.mul(q).smult(0.5)
+	this.q = this.q.mul(q).smult(0.5);
 	numeric.addeq(this.P, this.force);
 	numeric.addeq(this.L, this.torque);
 
@@ -100,6 +99,10 @@ RB.prototype.move = function () {
 	for (var p in this.particles) {
 		this.particles[p].move();
 	}
+};
+RB.prototype.reset = function() {
+	this.P = [0, 0, 0];
+	this.L = [0, 0, 0];
 };
 RB.prototype.update = function () {
 	this.computeAux();
@@ -134,11 +137,11 @@ RB.prototype.updateBodyInertia = function () {
 };
 RB.prototype.isOverlap = function (rb) {
 	for (var i in this.particles) {
-		p1 = this.particles[i];
+		var p1 = this.particles[i];
 		for (var j in rb.particles) {
-			p2 = rb.particles[j];
-			var dist = Math.sqrt(numeric.sum(numeric.pow(numeric.sub(p1.x, p2.x), [2, 2, 2])));
-			if (dist <= (p1.r + p2.r)) {
+			var p2 = rb.particles[j];
+			var dist = Math.sqrt(numeric.sum(numeric.pow(numeric.sub(p1.getPosition(), p2.getPosition()), [2, 2, 2])));
+			if (dist <= (p1.getRadius() + p2.getRadius())) {
 				return true;
 			}
 		}
@@ -215,7 +218,7 @@ RB.prototype.join = function (rbs) {
 		for (var p in rbs[rb].particles) {
 			var particle = rbs[rb].particles[p];
 			// bx = x - ceneter of mass
-			particle.bx = numeric.sub(numeric.add(particle.bx, rbs[rb].x), pos);
+			particle.bx = numeric.sub(particle.getPosition(), pos);
 			// append new particles from joined rigid bodies
 			this.particles.push(particle);
 			// change rigid body to which particle belongs
@@ -227,4 +230,5 @@ RB.prototype.join = function (rbs) {
 	this.x = pos;
 	this.updateBodyInertia();
 	this.computeAux();
+	console.log(this.x, this.R, this.P, this.L);
 };

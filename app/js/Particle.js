@@ -24,15 +24,8 @@ function Particle(radius, position) {
 	// this.torque;    float3
 	// -----------------------------------------------------
 	this.rb = undefined;
-	this.force = [0, 0, 0]; // DELETE?
-	this.torque = [0, 0, 0]; // DELETE?
-	this.omega = [0, 0, 0]; // DELETE?
 	this.bx = [0, 0, 0];
 	this.x = position;
-	this.R = numeric.identity(3); // DELETE?
-	this.P = [0, 0, 0]; // DELETE?
-	this.L = [0, 0, 0]; // DELETE?
-	this.I = 0;  // DELETE?
 	this.setSphere(radius, position);
 }
 Particle.DENSITY = 1 / ((4 / 3) * Math.PI * 1000);		// for r = 10, mass should be = 1
@@ -80,9 +73,6 @@ Particle.prototype.getKineticEnergy = function () {
 Particle.prototype.getMass = function () {
 	return this.mass;
 };
-Particle.prototype.getMomentum = function () {
-	return this.P;
-};
 Particle.prototype.getPosition = function () {
 	if (this.rb) {
 		return numeric.add(this.rb.x, numeric.dot(this.rb.q.normalize().toMatrix(), this.bx))
@@ -121,5 +111,4 @@ function pinv(A) {
 			Sinv[i] = 0;
 	}
 	return numeric.dot(numeric.dot(V, numeric.diag(Sinv)), numeric.transpose(U));
-}
-;
+};

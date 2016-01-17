@@ -94,30 +94,6 @@ Inspector.prototype.addParticleContainer = function(id, parentID) {
 					)
 				)
 			)
-		).append(
-			$('<div></div>').addClass('property').append(
-				$('<span></span>').addClass('label').text('Momentum:')
-			).append(
-				$('<div></div>').addClass('container-fluid').append(
-					$('<div></div>').addClass('row').append(
-						$('<div></div>').addClass('col-xs-6').append(
-							$('<div></div>').addClass('input-group').append(
-								$('<span></span>').addClass('input-group-addon').text('X')
-							).append(
-								$('<input type="text" />').addClass('form-control momentum-x')
-							)
-						)
-					).append(
-						$('<div></div>').addClass('col-xs-6').append(
-							$('<div></div>').addClass('input-group').append(
-								$('<span></span>').addClass('input-group-addon').text('Y')
-							).append(
-								$('<input type="text" />').addClass('form-control momentum-y')
-							)
-						)
-					)
-				)
-			)
 		)
 	);
 	
@@ -353,7 +329,4 @@ Inspector.prototype.updateParticleValues = function(particle, $particleContainer
 	$particleContainer.find('input.position-z').val(particlePosition[2]);
 	$particleContainer.find('input.radius').val(particle.getRadius());
 	$particleContainer.find('input.mass').val(particle.getMass());
-	var particleMomentum = particle.getMomentum();
-	$particleContainer.find('input.momentum-x').val(particleMomentum[0]);
-	$particleContainer.find('input.momentum-y').val(particleMomentum[1]);
 };

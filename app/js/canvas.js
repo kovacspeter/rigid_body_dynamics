@@ -56,8 +56,9 @@ Canvas.prototype.crateRigidBody = function (evt) {
 			overlaping.push(this.objects[o]);
 		}
 	}
-
-	rb.join(overlaping);
+	if (overlaping.length > 0) {
+		rb.join(overlaping);
+	}
 
 	// Delete merged bodies
 	var new_objects = [];
