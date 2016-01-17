@@ -103,10 +103,52 @@ Canvas.prototype.act = function (evt) {
 
 	this.state = null;
 };
+Canvas.prototype.getCollideObjects = function () {
+	var collideObjects = [];
+	for (var objectsI = 0; objectsI < this.objects.length; objectsI++) {
+		for (var objectsJ = objectsI + 1; objectsJ < this.objects.length; objectsJ++) {
+			var object1 = this.objects[objectsI];
+			var object2 = this.objects[objectsJ];
+			for (var particlesI = 0; particlesI < object1.particles.length; particlesI++) {
+				for (var particlesJ = 0; particlesJ < object2.particles.length; particlesJ++) {
+					var particle1 = object1.particles[particlesI];
+					var particle2 = object2.particles[particlesJ];
+					var distVector = numeric.sub(particle1.getPosition(), particle2.getPosition());
+					var distance = numeric.norm2(distVector);
+					if (distance < (particle1.getRadius() + particle2.getRadius())) {
+						collideObjects.push({
+							objectIndex1: objectsI,
+							objectIndex2: objectsJ,
+							particleIndex1: particlesI,
+							particleIndex2: particlesJ,
+							distance: {vector: distVector, length: distance}
+						});
+					}
+				}
+			}
+		}
+	}
+	return collideObjects;
+};
 Canvas.prototype.update = function () {
 	for (var o in this.objects) {
 		var obj = this.objects[o];
 		obj.update();
+	}
+
+	var collideObjects = this.getCollideObjects();
+	for (var i = 0; i < collideObjects.length; i++) {
+		var object1 = this.objects[collideObjects[i].objectIndex1];
+		var particle1 = object1.particles[collideObjects[i].particleIndex1];
+		var object2 = this.objects[collideObjects[i].objectIndex2];
+		var particle2 = object2.particles[collideObjects[i].particleIndex2];
+		var nVector = numeric.div(collideObjects[i].distance.vector, collideObjects[i].distance.length);
+		var k = (particle1.getRadius() + particle2.getRadius()) - collideObjects[i].distance.length; // size of intersection
+		numeric.addeq(object1.x, [nVector[0]*(k/(object1.mass + object2.mass))*object2.mass, nVector[1]*(k/(object1.mass + object2.mass))*object2.mass, 0]);
+		numeric.addeq(object2.x, [-nVector[0]*(k/(object1.mass + object2.mass))*object1.mass, -nVector[1]*(k/(object1.mass + object2.mass))*object1.mass, 0]);
+		k = -2 * ((object1.v[0] - object2.v[0]) * nVector[0] + (object1.v[1] - object2.v[1]) * nVector[1]) / (1 / object1.mass + 1 / object2.mass);
+		particle1.applyForce(numeric.mul(nVector, k));
+		particle2.applyForce(numeric.mul(nVector, -k));
 	}
 };
 Canvas.prototype.render = function (dt) {

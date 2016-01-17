@@ -25,12 +25,13 @@ function RB(particle) {
 	this.mass = particle.getMass();
 	this.force = [0, 0, 0];
 	this.torque = [0, 0, 0];
+	this.P = [0, 0, 0];
+	this.L = [0, 0, 0];
 	this.R = numeric.identity(3);
 	this.q = new Quaternion([0, 0, 0], 1);
 	this.omega = [0, 0, 0];
 	this.v = [0, 0, 0];
 	this.Ek = 0;
-	this.reset();
 	this.updateBodyInertia();
 	this.computeAux();
 	this.ID = ++RB.LAST_ID;
@@ -80,8 +81,6 @@ RB.prototype.integrateEuler = function () {
 
 	this.force = [0, 0, 0];
 	this.torque = [0, 0, 0];
-	//console.log(this.P);
-	//console.log(this.L);
 };
 
 RB.prototype.draw = function (context, color) {
@@ -99,10 +98,6 @@ RB.prototype.move = function () {
 	for (var p in this.particles) {
 		this.particles[p].move();
 	}
-};
-RB.prototype.reset = function() {
-	this.P = [0, 0, 0];
-	this.L = [0, 0, 0];
 };
 RB.prototype.update = function () {
 	this.computeAux();
@@ -230,5 +225,4 @@ RB.prototype.join = function (rbs) {
 	this.x = pos;
 	this.updateBodyInertia();
 	this.computeAux();
-	console.log(this.x, this.R, this.P, this.L);
 };

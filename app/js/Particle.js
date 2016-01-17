@@ -90,7 +90,6 @@ Particle.prototype.isInside = function (x, y, z) {
 	var sub = numeric.sub([x, y, z], this.getPosition());
 	var power = numeric.pow(sub, [2, 2, 2]);
 	var sum = numeric.sum(power);
-	// console.log(this.r - Math.sqrt(sum) >= 0);
 	return this.r - Math.sqrt(sum) >= 0;
 };
 
