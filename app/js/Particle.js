@@ -1,4 +1,4 @@
-function Particle(radius, position) {
+function Particle(r, position) {
 	//-----------------------------------
 	// this.rb    	 - rigid body to which particle belongs
 	// this.bx       - relative position form center of mass of this.rb
@@ -10,12 +10,6 @@ function Particle(radius, position) {
 	this.rb = undefined;
 	this.bx = [0, 0, 0];
 	this.x = position;
-	this.setSphere(radius, position);
-}
-Particle.DENSITY = 1 / ((4 / 3) * Math.PI * 1000);		// for r = 10, mass should be = 1
-Particle.LAST_ID = 0;
-
-Particle.prototype.setSphere = function (r) {
 	this.r = r;
 	this.mass = this.computeMass();
 	this.Ibody = [
@@ -24,28 +18,34 @@ Particle.prototype.setSphere = function (r) {
 		[0, 0, 2 * this.mass * Math.pow(this.r, 2) / 5]
 	];
 	this.Ibodyinv = numeric.inv(this.Ibody);
-};
+}
+Particle.DENSITY = 1 / ((4 / 3) * Math.PI * 1000);		// for r = 10, mass should be = 1
+Particle.LAST_ID = 0;
 
 Particle.prototype.draw = function (context, color) {
 	// Draws circle representing particle on canvas
 	drawCircle(context, this.getPosition(), this.r, color);
 };
-
+/**
+ * Draws particle center and line to center of mass of object
+ * to which particle belongs on canvas
+ */
 Particle.prototype.drawCentre = function (context) {
-	// Draws particle center and line to center of mass of object
-	// to which particle belongs on canvas
 	drawX(context, this.getPosition(), 6, '#777');
 	drawLine(context, this.rb.getPosition(), this.getPosition(), '#222', 1);
 };
-
+/**
+ * Computes mass of rigid body
+ */
 Particle.prototype.computeMass = function () {
-	// Computes mass of rigid body
 	var volume = (4 / 3) * Math.PI * Math.pow(this.r, 3);
 	return Particle.DENSITY * volume;
 };
 
+/**
+ * Returns matrix which represents cross product
+ */
 Particle.prototype.getCrossMatrix = function (vec) {
-	// Returns matrix which represents cross product
 	var vecx = [
 		[0, -vec[2], vec[1]],
 		[vec[2], 0, -vec[0]],
@@ -75,20 +75,37 @@ Particle.prototype.getRadius = function () {
 Particle.prototype.getVelocity = function () {
 	return this.v;
 };
+
+/**
+ * Returns wether point (x,y,z) is inside this parcile(sphere)
+ *
+ * @param x,y,z  coordinates of point
+ * @returns {bool} Wether is point in this particle(sphere)
+ */
 Particle.prototype.isInside = function (x, y, z) {
-	// Returns wether point (x,y,z) is inside this parcile(sphere)
 	var sub = numeric.sub([x, y, z], this.getPosition());
 	var power = numeric.pow(sub, [2, 2, 2]);
 	var sum = numeric.sum(power);
 	return this.r - Math.sqrt(sum) >= 0;
 };
 
+/**
+ * Applies force on this particular particle.
+ *
+ * @param {array} (x,y,z) vector of force beeing applied.
+ */
 Particle.prototype.applyForce = function(force) {
 	// Applies force on particle
 	numeric.addeq(this.rb.force, force);
 	numeric.addeq(this.rb.torque, numeric.dot(this.getCrossMatrix(numeric.sub(this.rb.x, this.getPosition())), force));
 };
 
+/**
+ * Calculate pseudoinverse matrix.
+ *
+ * @param {array of arrays} Matrix from which we want pseudoinverse matrix.
+ * @returns {array of arrays} Pseudoinverse matrix of input.
+ */
 function pinv(A) {
 	// Returns pseudoinverse matrix of matrix A
 	var z = numeric.svd(A), foo = z.S[0];

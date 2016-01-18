@@ -41,6 +41,9 @@ function RB(particle) {
 
 RB.LAST_ID = 0;
 
+/**
+ * Calculates linear and angular velocity and rotation matrix .
+ */
 RB.prototype.computeAux = function () {
 	// Computes linear velocity
   this.v = numeric.div(this.P, this.getMass());
@@ -51,6 +54,9 @@ RB.prototype.computeAux = function () {
 	this.omega = numeric.dot(this.Iinv, this.L);
 };
 
+/**
+ * Computes objects collision with wall.
+ */
 RB.prototype.computeCollisions = function () {
 	//TODO
 	for (var i = 0; i < this.particles.length; i++) {
@@ -74,6 +80,10 @@ RB.prototype.computeCollisions = function () {
 	}
 };
 
+
+/**
+ * Computes equations of motion
+ */
 RB.prototype.integrateEuler = function () {
 	// Equations of motion
 	numeric.addeq(this.x, this.v);
@@ -87,6 +97,11 @@ RB.prototype.integrateEuler = function () {
 	this.torque = [0, 0, 0];
 };
 
+
+/**
+ * Call draw procedure for each particle belonging
+ * to this rigid body.
+ */
 RB.prototype.draw = function (context, color) {
 	for (var p in this.particles) {
 		this.particles[p].draw(context, color);
@@ -96,18 +111,20 @@ RB.prototype.draw = function (context, color) {
 	}
 	drawX(context, this.x, 8, '#999');
 };
-RB.prototype.move = function () {
-	numeric.addeq(this.x, this.v);
 
-	for (var p in this.particles) {
-		this.particles[p].move();
-	}
-};
+/**
+ * Higher level procedure.
+ */
 RB.prototype.update = function () {
 	this.computeAux();
 	this.integrateEuler();
   this.computeCollisions();
 };
+
+/**
+ * Update inertia tensor of this rigid body.
+ * Called after rigid bodies are joind or when new is created.
+ */
 RB.prototype.updateBodyInertia = function () {
 	var J = [
 		[0, 0, 0],
@@ -135,6 +152,13 @@ RB.prototype.updateBodyInertia = function () {
 	// Actual Inertia tensor of rigid body.
 	this.Ibodyinv = pinv(J);
 };
+
+/**
+ * Calculate wether rigid body overlaps with this rigid body.
+ *
+ * @param {RB} rigid body which is beeing tested for overlap.
+ * @returns {bool} wethere rigid body overlaps or not.
+ */
 RB.prototype.isOverlap = function (rb) {
 	for (var i in this.particles) {
 		var p1 = this.particles[i];
@@ -207,6 +231,11 @@ RB.prototype.getVolume = function() {
 	return this.getMass() / this.getDensity();
 };
 
+/**
+ * Join array of rigid bodies to this rigid body.
+ *
+ * @param {array} of rigid bodies which are supposed to be joined.
+ */
 RB.prototype.join = function (rbs) {
 	// We need to compute new center of mass
 	var pos = numeric.mul(this.x, this.getMass());
