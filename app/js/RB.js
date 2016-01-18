@@ -116,20 +116,21 @@ RB.prototype.updateBodyInertia = function () {
 	];
 	for (var p in this.particles) {
 		var particle = this.particles[p];
-		var r = particle.bx;
-		// r * rT -> 3x1 * 1x3 = 3x3
-		var outer = [
-			[r[0] * r[0], r[0] * r[1], r[0] * r[2]],
-			[r[1] * r[0], r[1] * r[1], r[1] * r[2]],
-			[r[2] * r[0], r[2] * r[1], r[2] * r[2]]
-		];
-		// rT * r * Identity -> (1x3 * 3x1) * 3x3 = 3x3
-		var inner = numeric.mul(numeric.dot(r, r), numeric.identity(3));
-		var diff = numeric.sub(inner, outer);
-		// Multiplying by particle mass to get Inertia tensor of particle
-		var Ibody = numeric.mul(particle.mass, diff);
-		// Add all inertias of particles to get Inertia tensor of rigid body.
-		numeric.addeq(J, Ibody);
+		// var r = particle.bx;
+		// // r * rT -> 3x1 * 1x3 = 3x3
+		// var outer = [
+		// 	[r[0] * r[0], r[0] * r[1], r[0] * r[2]],
+		// 	[r[1] * r[0], r[1] * r[1], r[1] * r[2]],
+		// 	[r[2] * r[0], r[2] * r[1], r[2] * r[2]]
+		// ];
+		// // rT * r * Identity -> (1x3 * 3x1) * 3x3 = 3x3
+		// var inner = numeric.mul(numeric.dot(r, r), numeric.identity(3));
+		// var diff = numeric.sub(inner, outer);
+		// // Multiplying by particle mass to get Inertia tensor of particle
+		// var Ibody = numeric.mul(particle.mass, diff);
+		// // Add all inertias of particles to get Inertia tensor of rigid body.
+		// numeric.addeq(J, Ibody);
+		numeric.addeq(J, particle.Ibody);
 	}
 	// Actual Inertia tensor of rigid body.
 	this.Ibodyinv = pinv(J);

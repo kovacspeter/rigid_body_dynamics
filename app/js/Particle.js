@@ -1,28 +1,12 @@
 function Particle(radius, position) {
-	// -----------------------------------------------------
-	//     Constant:
-	// this.r;         float    radius
-	// this.mass;      float
-	// this.Ibody;     matrix3
-	// this.Ibodyinv;  matrix3
-	// -----------------------------------------------------
-	//     State:
-	// this.x;         float3    Position
-	// this.bx         float3    Local Position in Body System
-	// this.R;         matrix3   Rotation
-	// this.P;         float3    Linear momentum = m v
-	// this.L;         float3    Angular momentum = I omega
-	// -----------------------------------------------------
-	//     Derived:
-	// this.I					 float3		Moment of Inertia
-	// this.Iinv;      matrix3
-	// this.v;         float3
-	// this.omega;     float3		--> #DISCUSS: IS angular velocity of the particle really needed?
-	// -----------------------------------------------------
-	//     Computed:
-	// this.force;     float3
-	// this.torque;    float3
-	// -----------------------------------------------------
+	//-----------------------------------
+	// this.rb    	 - rigid body to which particle belongs
+	// this.bx       - relative position form center of mass of this.rb
+	// this.x        - actual position of particle(on canvas)
+	// this.r        - radius of this particle(sphere)
+	// this.Ibody    - inertia tensor of this particle
+	// this.Ibodyinv - inversed this.Ibody
+	// this.mass     - weight of this particle
 	this.rb = undefined;
 	this.bx = [0, 0, 0];
 	this.x = position;
@@ -43,20 +27,25 @@ Particle.prototype.setSphere = function (r) {
 };
 
 Particle.prototype.draw = function (context, color) {
+	// Draws circle representing particle on canvas
 	drawCircle(context, this.getPosition(), this.r, color);
 };
 
 Particle.prototype.drawCentre = function (context) {
+	// Draws particle center and line to center of mass of object
+	// to which particle belongs on canvas
 	drawX(context, this.getPosition(), 6, '#777');
 	drawLine(context, this.rb.getPosition(), this.getPosition(), '#222', 1);
 };
 
 Particle.prototype.computeMass = function () {
+	// Computes mass of rigid body
 	var volume = (4 / 3) * Math.PI * Math.pow(this.r, 3);
 	return Particle.DENSITY * volume;
 };
 
 Particle.prototype.getCrossMatrix = function (vec) {
+	// Returns matrix which represents cross product
 	var vecx = [
 		[0, -vec[2], vec[1]],
 		[vec[2], 0, -vec[0]],
@@ -87,6 +76,7 @@ Particle.prototype.getVelocity = function () {
 	return this.v;
 };
 Particle.prototype.isInside = function (x, y, z) {
+	// Returns wether point (x,y,z) is inside this parcile(sphere)
 	var sub = numeric.sub([x, y, z], this.getPosition());
 	var power = numeric.pow(sub, [2, 2, 2]);
 	var sum = numeric.sum(power);
@@ -94,11 +84,13 @@ Particle.prototype.isInside = function (x, y, z) {
 };
 
 Particle.prototype.applyForce = function(force) {
+	// Applies force on particle
 	numeric.addeq(this.rb.force, force);
 	numeric.addeq(this.rb.torque, numeric.dot(this.getCrossMatrix(numeric.sub(this.rb.x, this.getPosition())), force));
 };
 
 function pinv(A) {
+	// Returns pseudoinverse matrix of matrix A
 	var z = numeric.svd(A), foo = z.S[0];
 	var U = z.U, S = z.S, V = z.V;
 	var m = A.length, n = A[0].length, tol = Math.max(m, n) * numeric.epsilon * foo, M = S.length;

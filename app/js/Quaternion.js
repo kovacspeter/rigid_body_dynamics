@@ -1,10 +1,14 @@
 function Quaternion(v, s) {
+  //-----------------------------------
+  // this.v - vector part of quaternion
+  // this.s - real part of quaternion
   this.v = v;
   this.s = s;
 }
 
 
 Quaternion.prototype.mul = function (r) {
+  // Multiply this quaternion with quaternion r
   var new_s = this.s*r.s - numeric.dot(this.v, r.v);
   var i = r.s*this.v[0] + r.v[0]*this.s - r.v[1]*this.v[2] + r.v[2]*this.v[1]
   var j = r.s*this.v[1] + r.v[0]*this.v[2] - r.v[1]*this.s + r.v[2]*this.v[0]
@@ -14,6 +18,7 @@ Quaternion.prototype.mul = function (r) {
 };
 
 Quaternion.prototype.smult = function (scalar) {
+  // Multiply quaternion with scalar value
   this.v[0] = this.v[0] * scalar;
   this.v[1] = this.v[1] * scalar;
   this.v[2] = this.v[2] * scalar;
@@ -23,6 +28,7 @@ Quaternion.prototype.smult = function (scalar) {
 };
 
 Quaternion.prototype.getCrossMatrix = function(vec) {
+  // Returns matrix which represents cross product
   var vecx = [
     [0, -vec[2], vec[1]],
     [vec[2], 0, -vec[0]],
@@ -32,6 +38,7 @@ Quaternion.prototype.getCrossMatrix = function(vec) {
 };
 
 Quaternion.prototype.normalize = function(){
+  // Normalize quaternion to be of length 1
   var l = Math.sqrt(this.v[0]*this.v[0] + this.v[1]*this.v[1] + this.v[2]*this.v[2] + this.s*this.s);
   if (l == 0) {
     return new Quaternion([0, 0, 0], 1);
@@ -42,6 +49,7 @@ Quaternion.prototype.normalize = function(){
 };
 
 Quaternion.prototype.toMatrix = function(q) {
+  // Returns rotation matrix from quaternion
   var v = this.v;
   var s = this.s;
   var x11 = 1 - 2*v[1]*v[1] - 2*v[2]*v[2];

@@ -29,6 +29,7 @@ Canvas.prototype.setMouseButtonClickCoords = function (evt) {
 	this.mouseButtonClickCoords.y = evt.pageY - this.canvasElement.offset().top;
 };
 Canvas.prototype.createParticle = function (evt) {
+	// Creates new particle with position specified in evt
 	var x = evt.pageX - this.canvasElement.offset().left;
 	var y = evt.pageY - this.canvasElement.offset().top;
 	var mouseVector = [x - this.mouseButtonClickCoords.x, y - this.mouseButtonClickCoords.y];
@@ -44,6 +45,9 @@ Canvas.prototype.createParticle = function (evt) {
 	return particle;
 };
 Canvas.prototype.crateRigidBody = function (evt) {
+	// Creates new rigid body composing of one particle, if this body
+	// overlaps with another rigid body we join them to be one rigid body
+
 	// First create particle
 	var particle = this.createParticle(evt);
 	// Each particle belongs to some rigid body
@@ -72,6 +76,7 @@ Canvas.prototype.crateRigidBody = function (evt) {
 	this.objects.push(rb);
 };
 Canvas.prototype.applyForce = function (evt) {
+	// High level function for applying force on some particle
 	var x = evt.pageX - this.canvasElement.offset().left
 	var y = evt.pageY - this.canvasElement.offset().top
 	for (i in this.objects) {
