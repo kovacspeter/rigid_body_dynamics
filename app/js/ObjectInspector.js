@@ -107,11 +107,47 @@ Inspector.prototype.initPropertyContainer = function($bodyContainer) {
 	
 	$propertyContainer.append(
 		$('<div></div>').addClass('property').append(
-			$('<span></span>').addClass('label').text('Center of mass:')
+			$('<div></div>').addClass('container-fluid').append(
+				$('<div></div>').addClass('row').append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<span></span>').addClass('label').text('Mass')
+					).append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('m')
+						).append(
+							$('<input type="text" />').addClass('form-control mass')
+						)
+					)
+				).append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<span></span>').addClass('label').text('Volume')
+					).append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('V')
+						).append(
+							$('<input type="text" />').addClass('form-control volume')
+						)
+					)
+				).append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<span></span>').addClass('label').text('Density')
+					).append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('ρ')
+						).append(
+							$('<input type="text" />').addClass('form-control density')
+						)
+					)
+				)
+			)
+		)
+	).append(
+		$('<div></div>').addClass('property').append(
+			$('<span></span>').addClass('label').text('Center of mass p(t):')
 		).append(
 			$('<div></div>').addClass('container-fluid').append(
 				$('<div></div>').addClass('row').append(
-					$('<div></div>').addClass('col-xs-6').append(
+					$('<div></div>').addClass('col-xs-4').append(
 						$('<div></div>').addClass('input-group').append(
 							$('<span></span>').addClass('input-group-addon').text('X')
 						).append(
@@ -119,83 +155,59 @@ Inspector.prototype.initPropertyContainer = function($bodyContainer) {
 						)
 					)
 				).append(
-					$('<div></div>').addClass('col-xs-6').append(
+					$('<div></div>').addClass('col-xs-4').append(
 						$('<div></div>').addClass('input-group').append(
 							$('<span></span>').addClass('input-group-addon').text('Y')
 						).append(
 							$('<input type="text" />').addClass('form-control position-y')
 						)
 					)
+				).append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('Z')
+						).append(
+							$('<input type="text" />').addClass('form-control position-z')
+						)
+					)
 				)
 			)
 		)
 	).append(
 		$('<div></div>').addClass('property').append(
-			$('<span></span>').addClass('label').text('Force vector:')
+			$('<span></span>').addClass('label').text('Orientation q(t):')
 		).append(
 			$('<div></div>').addClass('container-fluid').append(
 				$('<div></div>').addClass('row').append(
-					$('<div></div>').addClass('col-xs-6').append(
+					$('<div></div>').addClass('col-xs-3').append(
 						$('<div></div>').addClass('input-group').append(
-							$('<span></span>').addClass('input-group-addon').text('X')
+							$('<span></span>').addClass('input-group-addon').text('i')
 						).append(
-							$('<input type="text" />').addClass('form-control force-x')
+							$('<input type="text" />').addClass('form-control orientation-i')
 						)
 					)
 				).append(
-					$('<div></div>').addClass('col-xs-6').append(
+					$('<div></div>').addClass('col-xs-3').append(
 						$('<div></div>').addClass('input-group').append(
-							$('<span></span>').addClass('input-group-addon').text('Y')
+							$('<span></span>').addClass('input-group-addon').text('j')
 						).append(
-							$('<input type="text" />').addClass('form-control force-y')
-						)
-					)
-				)
-			)
-		)
-	).append(
-		$('<div></div>').addClass('property').append(
-			$('<span></span>').addClass('label').text('Momentum:')
-		).append(
-			$('<div></div>').addClass('container-fluid').append(
-				$('<div></div>').addClass('row').append(
-					$('<div></div>').addClass('col-xs-6').append(
-						$('<div></div>').addClass('input-group').append(
-							$('<span></span>').addClass('input-group-addon').text('X')
-						).append(
-							$('<input type="text" />').addClass('form-control momentum-x')
+							$('<input type="text" />').addClass('form-control orientation-j')
 						)
 					)
 				).append(
-					$('<div></div>').addClass('col-xs-6').append(
+					$('<div></div>').addClass('col-xs-3').append(
 						$('<div></div>').addClass('input-group').append(
-							$('<span></span>').addClass('input-group-addon').text('Y')
+							$('<span></span>').addClass('input-group-addon').text('k')
 						).append(
-							$('<input type="text" />').addClass('form-control momentum-y')
-						)
-					)
-				)
-			)
-		)
-	).append(
-		$('<div></div>').addClass('property').append(
-			$('<span></span>').addClass('label').text('Acceleration:')
-		).append(
-			$('<div></div>').addClass('container-fluid').append(
-				$('<div></div>').addClass('row').append(
-					$('<div></div>').addClass('col-xs-6').append(
-						$('<div></div>').addClass('input-group').append(
-							$('<span></span>').addClass('input-group-addon').text('X')
-						).append(
-							$('<input type="text" />').addClass('form-control acceleration-x')
+							$('<input type="text" />').addClass('form-control orientation-k')
 						)
 					)
 				).append(
-					$('<div></div>').addClass('col-xs-6').append(
+					$('<div></div>').addClass('col-xs-3').append(
 						$('<div></div>').addClass('input-group').append(
-							$('<span></span>').addClass('input-group-addon').text('Y')
+							$('<span></span>').addClass('input-group-addon').text('s')
 						).append(
-							$('<input type="text" />').addClass('form-control acceleration-y')
+							$('<input type="text" />').addClass('form-control orientation-s')
 						)
 					)
 				)
@@ -203,11 +215,11 @@ Inspector.prototype.initPropertyContainer = function($bodyContainer) {
 		)
 	).append(
 		$('<div></div>').addClass('property').append(
-			$('<span></span>').addClass('label').text('Velocity:')
+			$('<span></span>').addClass('label').text('Linear velocity v(t):')
 		).append(
 			$('<div></div>').addClass('container-fluid').append(
 				$('<div></div>').addClass('row').append(
-					$('<div></div>').addClass('col-xs-6').append(
+					$('<div></div>').addClass('col-xs-4').append(
 						$('<div></div>').addClass('input-group').append(
 							$('<span></span>').addClass('input-group-addon').text('X')
 						).append(
@@ -215,11 +227,19 @@ Inspector.prototype.initPropertyContainer = function($bodyContainer) {
 						)
 					)
 				).append(
-					$('<div></div>').addClass('col-xs-6').append(
+					$('<div></div>').addClass('col-xs-4').append(
 						$('<div></div>').addClass('input-group').append(
 							$('<span></span>').addClass('input-group-addon').text('Y')
 						).append(
 							$('<input type="text" />').addClass('form-control velocity-y')
+						)
+					)
+				).append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('Z')
+						).append(
+							$('<input type="text" />').addClass('form-control velocity-z')
 						)
 					)
 				)
@@ -227,25 +247,163 @@ Inspector.prototype.initPropertyContainer = function($bodyContainer) {
 		)
 	).append(
 		$('<div></div>').addClass('property').append(
+			$('<span></span>').addClass('label').text('Angular velocity ω(t):')
+		).append(
 			$('<div></div>').addClass('container-fluid').append(
 				$('<div></div>').addClass('row').append(
-					$('<div></div>').addClass('col-xs-6').append(
-						$('<span></span>').addClass('label').text('Inertia')
-					).append(
+					$('<div></div>').addClass('col-xs-4').append(
 						$('<div></div>').addClass('input-group').append(
-							$('<span></span>').addClass('input-group-addon').text('I')
+							$('<span></span>').addClass('input-group-addon').text('X')
 						).append(
-							$('<input type="text" />').addClass('form-control inertia')
+							$('<input type="text" />').addClass('form-control angularVelocity-x')
 						)
 					)
 				).append(
-					$('<div></div>').addClass('col-xs-6').append(
-						$('<span></span>').addClass('label').text('Mass')
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('Y')
+						).append(
+							$('<input type="text" />').addClass('form-control angularVelocity-y')
+						)
+					)
+				).append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('Z')
+						).append(
+							$('<input type="text" />').addClass('form-control angularVelocity-z')
+						)
+					)
+				)
+			)
+		)
+	).append(
+		$('<div></div>').addClass('property').append(
+			$('<span></span>').addClass('label').text('Inertia tensor J(t):')
+		).append(
+			$('<div></div>').addClass('container-fluid').append(
+				$('<div></div>').addClass('row').append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('xx')
+						).append(
+							$('<input type="text" />').addClass('form-control inertia-xx')
+						)
 					).append(
 						$('<div></div>').addClass('input-group').append(
-							$('<span></span>').addClass('input-group-addon').text('m')
+							$('<span></span>').addClass('input-group-addon').text('yx')
 						).append(
-							$('<input type="text" />').addClass('form-control mass')
+							$('<input type="text" />').addClass('form-control inertia-yx')
+						)
+					).append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('zx')
+						).append(
+							$('<input type="text" />').addClass('form-control inertia-zx')
+						)
+					)
+				).append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('xy')
+						).append(
+							$('<input type="text" />').addClass('form-control inertia-xx')
+						)
+					).append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('yy')
+						).append(
+							$('<input type="text" />').addClass('form-control inertia-yy')
+						)
+					).append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('zy')
+						).append(
+							$('<input type="text" />').addClass('form-control inertia-zy')
+						)
+					)
+				).append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('xz')
+						).append(
+							$('<input type="text" />').addClass('form-control inertia-xz')
+						)
+					).append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('yz')
+						).append(
+							$('<input type="text" />').addClass('form-control inertia-yz')
+						)
+					).append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('zz')
+						).append(
+							$('<input type="text" />').addClass('form-control inertia-zz')
+						)
+					)
+				)
+			)
+		)
+	).append(
+		$('<div></div>').addClass('property').append(
+			$('<span></span>').addClass('label').text('Linear Momentum P(t):')
+		).append(
+			$('<div></div>').addClass('container-fluid').append(
+				$('<div></div>').addClass('row').append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('X')
+						).append(
+							$('<input type="text" />').addClass('form-control momentum-x')
+						)
+					)
+				).append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('Y')
+						).append(
+							$('<input type="text" />').addClass('form-control momentum-y')
+						)
+					)
+				).append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('Z')
+						).append(
+							$('<input type="text" />').addClass('form-control momentum-z')
+						)
+					)
+				)
+			)
+		)
+	).append(
+		$('<div></div>').addClass('property').append(
+			$('<span></span>').addClass('label').text('Angular Momentum P(t):')
+		).append(
+			$('<div></div>').addClass('container-fluid').append(
+				$('<div></div>').addClass('row').append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('X')
+						).append(
+							$('<input type="text" />').addClass('form-control angularMomentum-x')
+						)
+					)
+				).append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('Y')
+						).append(
+							$('<input type="text" />').addClass('form-control angularMomentum-y')
+						)
+					)
+				).append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('Z')
+						).append(
+							$('<input type="text" />').addClass('form-control angularMomentum-z')
 						)
 					)
 				)
@@ -308,18 +466,51 @@ Inspector.prototype.refresh = function(objects){
 };
 
 Inspector.prototype.updateBodyValues = function(object, $bodyContainer) {
-	$bodyContainer.find('.rigidBody-properties-container').find('input.position-x').val(object.getPosition()[0]);
-	$bodyContainer.find('.rigidBody-properties-container').find('input.position-y').val(object.getPosition()[1]);
-	$bodyContainer.find('.rigidBody-properties-container').find('input.force-x').val(object.getForce()[0]);
-	$bodyContainer.find('.rigidBody-properties-container').find('input.force-y').val(object.getForce()[1]);
-	$bodyContainer.find('.rigidBody-properties-container').find('input.momentum-x').val(object.getMomentum()[0]);
-	$bodyContainer.find('.rigidBody-properties-container').find('input.momentum-y').val(object.getMomentum()[1]);
-	$bodyContainer.find('.rigidBody-properties-container').find('input.velocity-x').val(object.getVelocity()[0]);
-	$bodyContainer.find('.rigidBody-properties-container').find('input.velocity-y').val(object.getVelocity()[1]);
-	$bodyContainer.find('.rigidBody-properties-container').find('input.acceleration-x').val(object.getAcceleration()[0]);
-	$bodyContainer.find('.rigidBody-properties-container').find('input.acceleration-y').val(object.getAcceleration()[1]);
-	$bodyContainer.find('.rigidBody-properties-container').find('input.inertia').val('...');
-	$bodyContainer.find('.rigidBody-properties-container').find('input.mass').val(object.getMass());
+	this.write($bodyContainer, 'mass', object.getMass());
+	this.write($bodyContainer, 'volume', object.getVolume());
+	this.write($bodyContainer, 'density', object.getDensity(), true);
+	
+	var objectPosition = object.getPosition();
+	this.write($bodyContainer, 'position-x', objectPosition[0]);
+	this.write($bodyContainer, 'position-y', objectPosition[0]);
+	this.write($bodyContainer, 'position-z', objectPosition[0]);
+	
+	var objectOrientation = object.getOrientation();
+	this.write($bodyContainer, 'orientation-i', objectOrientation.v[0]);
+	this.write($bodyContainer, 'orientation-j', objectOrientation.v[1]);
+	this.write($bodyContainer, 'orientation-k', objectOrientation.v[2]);
+	this.write($bodyContainer, 'orientation-s', objectOrientation.s);
+	
+	var objectLinearVelocity = object.getVelocity();
+	this.write($bodyContainer, 'velocity-x', objectLinearVelocity[0]);
+	this.write($bodyContainer, 'velocity-y', objectLinearVelocity[1]);
+	this.write($bodyContainer, 'velocity-z', objectLinearVelocity[2]);
+	
+	var objectAngularVelocity = object.getAngularVelocity();
+	this.write($bodyContainer, 'angularVelocity-x', objectAngularVelocity[0]);
+	this.write($bodyContainer, 'angularVelocity-y', objectAngularVelocity[1]);
+	this.write($bodyContainer, 'angularVelocity-z', objectAngularVelocity[2]);
+	
+	var objectInertiaTensor = object.getInertiaTensor();
+	this.write($bodyContainer, 'inertia-xx', objectInertiaTensor[0][0], true);
+	this.write($bodyContainer, 'inertia-xy', objectInertiaTensor[0][1], true);
+	this.write($bodyContainer, 'inertia-xz', objectInertiaTensor[0][2], true);
+	this.write($bodyContainer, 'inertia-yx', objectInertiaTensor[1][0], true);
+	this.write($bodyContainer, 'inertia-yy', objectInertiaTensor[1][1], true);
+	this.write($bodyContainer, 'inertia-yz', objectInertiaTensor[1][2], true);
+	this.write($bodyContainer, 'inertia-zx', objectInertiaTensor[2][0], true);
+	this.write($bodyContainer, 'inertia-zy', objectInertiaTensor[2][1], true);
+	this.write($bodyContainer, 'inertia-zz', objectInertiaTensor[2][2], true);
+	
+	var objectMomentum = object.getMomentum();
+	this.write($bodyContainer, 'momentum-x', objectMomentum[0]);
+	this.write($bodyContainer, 'momentum-y', objectMomentum[1]);
+	this.write($bodyContainer, 'momentum-z', objectMomentum[2]);
+	
+	var objectAngularMomentum = object.getAngularMomentum();
+	this.write($bodyContainer, 'angularMomentum-x', objectAngularMomentum[0]);
+	this.write($bodyContainer, 'angularMomentum-y', objectAngularMomentum[1]);
+	this.write($bodyContainer, 'angularMomentum-z', objectAngularMomentum[2]);
 };
 
 Inspector.prototype.updateParticleValues = function(particle, $particleContainer) {
@@ -329,4 +520,11 @@ Inspector.prototype.updateParticleValues = function(particle, $particleContainer
 	$particleContainer.find('input.position-z').val(particlePosition[2]);
 	$particleContainer.find('input.radius').val(particle.getRadius());
 	$particleContainer.find('input.mass').val(particle.getMass());
+};
+
+Inspector.prototype.write = function($bodyContainer, inputClass, value, noRound) {
+	if (!(noRound)) {
+		value = Math.round(value * 1000) / 1000;
+	}
+	$bodyContainer.find('.rigidBody-properties-container').find('input.'+inputClass).val(value);
 };

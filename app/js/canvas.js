@@ -136,6 +136,7 @@ Canvas.prototype.update = function () {
 		obj.update();
 	}
 
+ /*
 	var collideObjects = this.getCollideObjects();
 	for (var i = 0; i < collideObjects.length; i++) {
 		var object1 = this.objects[collideObjects[i].objectIndex1];
@@ -150,6 +151,7 @@ Canvas.prototype.update = function () {
 		particle1.applyForce(numeric.mul(nVector, k));
 		particle2.applyForce(numeric.mul(nVector, -k));
 	}
+	*/
 };
 Canvas.prototype.render = function (dt) {
 	this.context.clearRect(0, 0, this.canvasElement[0].width, this.canvasElement[0].height);

@@ -58,14 +58,18 @@ RB.prototype.computeCollisions = function () {
 		var particlePosition = particle.getPosition();
 		if (particlePosition[0] < particle.r) {
 			this.P[0] = Math.abs(this.P[0]);
+			this.L[2] = -this.L[2];
 		} else if (particlePosition[0] > Canvas.SIZE.WIDTH - particle.r) {
 			this.P[0] = -Math.abs(this.P[0]);
+			this.L[2] = -this.L[2];
 		}
 
 		if (particlePosition[1] < particle.r) {
 			this.P[1] = Math.abs(this.P[1]);
+			this.L[2] = -this.L[2];
 		} else if (particlePosition[1] > Canvas.SIZE.HEIGHT - particle.r) {
 			this.P[1] = -Math.abs(this.P[1]);
+			this.L[2] = -this.L[2];
 		}
 	}
 };
@@ -143,8 +147,12 @@ RB.prototype.isOverlap = function (rb) {
 	}
 	return false;
 };
-RB.prototype.getAcceleration = function () {
-	return numeric.mul(this.force, 1 / this.mass);
+
+RB.prototype.getAngularMomentum = function() {
+	return this.L;
+};
+RB.prototype.getAngularVelocity = function () {
+	return this.omega;
 };
 RB.prototype.getCrossMatrix = function (vec) {
 	var vecx = [
@@ -154,8 +162,14 @@ RB.prototype.getCrossMatrix = function (vec) {
 	];
 	return vecx;
 };
+RB.prototype.getDensity = function() {
+	return Particle.DENSITY;
+};
 RB.prototype.getForce = function () {
 	return this.force;
+};
+RB.prototype.getInertiaTensor = function() {
+	return this.Ibodyinv;
 };
 RB.prototype.getKineticEnergy = function() {
 	var Ek = 0;
@@ -169,6 +183,9 @@ RB.prototype.getMass = function () {
 };
 RB.prototype.getMomentum = function () {
 	return this.P;
+};
+RB.prototype.getOrientation = function() {
+	return this.q;
 };
 RB.prototype.getParticle = function (x, y, z) {
 	for (var p in this.particles) {
@@ -184,6 +201,9 @@ RB.prototype.getPosition = function () {
 };
 RB.prototype.getVelocity = function () {
 	return this.v;
+};
+RB.prototype.getVolume = function() {
+	return this.getMass() / this.getDensity();
 };
 
 RB.prototype.join = function (rbs) {
