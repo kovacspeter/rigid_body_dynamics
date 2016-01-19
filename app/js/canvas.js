@@ -16,7 +16,8 @@ function Canvas(canvasElement) {
 Canvas.STATES = {
 	NONE: 0,
 	ADDING_PARTICLE: 1,
-	APPLYING_FORCE: 3
+	APPLYING_FORCE: 3,
+	CHANGING_DENSITY: 4
 };
 Canvas.SIZE = {
 	WIDTH: 800,
@@ -41,7 +42,12 @@ Canvas.prototype.createParticle = function (evt) {
 	} else if (particleRadius > 100) { //Maximal size of particle
 		particleRadius = 100;
 	}
-	var particle = new Particle(particleRadius, [this.mouseButtonClickCoords.x, this.mouseButtonClickCoords.y, 0]);
+	
+	var density = parseInt($('#menu input#material-density').val());
+	if (!density) {
+		density = Particle.DENSITY;
+	}
+	var particle = new Particle(particleRadius, [this.mouseButtonClickCoords.x, this.mouseButtonClickCoords.y, 0], density);
 	return particle;
 };
 Canvas.prototype.crateRigidBody = function (evt) {

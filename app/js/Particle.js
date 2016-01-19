@@ -1,4 +1,4 @@
-function Particle(r, position) {
+function Particle(r, position, density) {
 	//-----------------------------------
 	// this.rb    	 - rigid body to which particle belongs
 	// this.bx       - relative position form center of mass of this.rb
@@ -11,6 +11,7 @@ function Particle(r, position) {
 	this.bx = [0, 0, 0];
 	this.x = position;
 	this.r = r;
+	this.density = density;
 	this.mass = this.computeMass();
 	this.Ibody = [
 		[2 * this.mass * Math.pow(this.r, 2) / 5, 0, 0],
@@ -38,8 +39,7 @@ Particle.prototype.drawCentre = function (context) {
  * Computes mass of rigid body
  */
 Particle.prototype.computeMass = function () {
-	var volume = (4 / 3) * Math.PI * Math.pow(this.r, 3);
-	return Particle.DENSITY * volume;
+	return this.density * this.getVolume();
 };
 
 /**
@@ -52,6 +52,9 @@ Particle.prototype.getCrossMatrix = function (vec) {
 		[-vec[1], vec[0], 0]
 	];
 	return vecx;
+};
+Particle.prototype.getDensity = function() {
+	return this.density;
 };
 Particle.prototype.getDistanceFromCenterOfMass = function () {
 	return Math.sqrt(this.bx[0] * this.bx[0] + this.bx[1] * this.bx[1] + this.bx[2] * this.bx[2]);
@@ -75,6 +78,16 @@ Particle.prototype.getRadius = function () {
 Particle.prototype.getVelocity = function () {
 	return this.v;
 };
+Particle.prototype.getVolume = function () {
+	return (4 / 3) * Math.PI * Math.pow(this.r, 3);
+};
+
+Particle.prototype.setDensity = function(density) {
+	this.density = density;
+	this.rb.mass -= this.mass;
+	this.mass = this.computeMass();
+	this.rb.mass += this.mass;
+}
 
 /**
  * Returns wether point (x,y,z) is inside this parcile(sphere)

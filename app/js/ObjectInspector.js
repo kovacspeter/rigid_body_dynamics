@@ -27,8 +27,8 @@ Inspector.prototype.addBodyContainer = function(id) {
 	return $bodyContainer;
 };
 
-Inspector.prototype.addParticleContainer = function(id, parentID) {
-	var $particleContainer = $('<li></li>').addClass('particle-container').attr('id', 'particle-container-'+id).data('id', id);
+Inspector.prototype.addParticleContainer = function(particle, object) {
+	var $particleContainer = $('<li></li>').addClass('particle-container').attr('id', 'particle-container-'+particle.ID).data('id', particle.ID);
 	$particleContainer.append(
 	  $('<a href="#"></a>').addClass('toggleSection').text('Particle').click(function(){
 			$(this).siblings().slideToggle();
@@ -36,68 +36,103 @@ Inspector.prototype.addParticleContainer = function(id, parentID) {
 			return false;
 		})
 	).append(
-		$('<div></div>').hide().append(
-			$('<div></div>').addClass('property').append(
-				$('<span></span>').addClass('label').text('Position:')
-			).append(
-				$('<div></div>').addClass('container-fluid').append(
-					$('<div></div>').addClass('row').append(
-						$('<div></div>').addClass('col-xs-4').append(
-							$('<div></div>').addClass('input-group').append(
-								$('<span></span>').addClass('input-group-addon').text('X')
-							).append(
-								$('<input type="text" />').addClass('form-control position-x')
-							)
-						)
+		$('<div></div>').addClass('property').append(
+			$('<div></div>').addClass('container-fluid').append(
+				$('<div></div>').addClass('row').append(
+					$('<div></div>').addClass('col-xs-6').append(
+						$('<span></span>').addClass('label').text('Radius')
 					).append(
-						$('<div></div>').addClass('col-xs-4').append(
-							$('<div></div>').addClass('input-group').append(
-								$('<span></span>').addClass('input-group-addon').text('Y')
-							).append(
-								$('<input type="text" />').addClass('form-control position-y')
-							)
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('r')
+						).append(
+							$('<input type="text" />').addClass('form-control radius')
 						)
+					)
+				).append(
+					$('<div></div>').addClass('col-xs-6').append(
+						$('<span></span>').addClass('label').text('Volume')
 					).append(
-						$('<div></div>').addClass('col-xs-4').append(
-							$('<div></div>').addClass('input-group').append(
-								$('<span></span>').addClass('input-group-addon').text('Z')
-							).append(
-								$('<input type="text" />').addClass('form-control position-z')
-							)
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('V')
+						).append(
+							$('<input type="text" />').addClass('form-control volume')
 						)
 					)
 				)
 			)
-		).append(
-			$('<div></div>').addClass('property').append(
-				$('<div></div>').addClass('container-fluid').append(
-					$('<div></div>').addClass('row').append(
-						$('<div></div>').addClass('col-xs-6').append(
-							$('<span></span>').addClass('label').text('Radius')
-						).append(
-							$('<div></div>').addClass('input-group').append(
-								$('<span></span>').addClass('input-group-addon').text('r')
-							).append(
-								$('<input type="text" />').addClass('form-control radius')
-							)
-						)
+		)
+	).append(
+		$('<div></div>').addClass('property').append(
+			$('<div></div>').addClass('container-fluid').append(
+				$('<div></div>').addClass('row').append(
+					$('<div></div>').addClass('col-xs-6').append(
+						$('<span></span>').addClass('label').text('Density')
 					).append(
-						$('<div></div>').addClass('col-xs-6').append(
-							$('<span></span>').addClass('label').text('Mass')
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('ρ')
 						).append(
-							$('<div></div>').addClass('input-group').append(
-								$('<span></span>').addClass('input-group-addon').text('m')
-							).append(
-								$('<input type="text" />').addClass('form-control mass')
-							)
+							$('<input type="text" />').addClass('form-control density')
+						)
+					)
+				).append(
+					$('<div></div>').addClass('col-xs-6').append(
+						$('<span></span>').addClass('label').text('Mass')
+					).append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('m')
+						).append(
+							$('<input type="text" />').addClass('form-control mass')
+						)
+					)
+				)
+			)
+		)
+	).append($('<div></div>').addClass('property').append(
+		$('<span></span>').addClass('label').text('Position:')
+		).append(
+			$('<div></div>').addClass('container-fluid').append(
+				$('<div></div>').addClass('row').append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('X')
+						).append(
+							$('<input type="text" />').addClass('form-control position-x')
+						)
+					)
+				).append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('Y')
+						).append(
+							$('<input type="text" />').addClass('form-control position-y')
+						)
+					)
+				).append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('Z')
+						).append(
+							$('<input type="text" />').addClass('form-control position-z')
 						)
 					)
 				)
 			)
 		)
 	);
-	
-	this.$element.find('#rigidBody-container-'+parentID).find('.rigidBody-particles-container').append($particleContainer);
+	$particleContainer.find('input.density').focus(function(){
+		App.canvas.state = Canvas.STATES.CHANGING_DENSITY;
+		console.log(App.canvas.state);
+	}).change(function(){
+		var density = parseInt($(this).val());
+		if (!density) {
+			density = Particle.DENSITY;
+		}
+		particle.setDensity(density);
+		App.canvas.state = null;
+	}).blur(function(){
+		App.canvas.state = null;
+	});
+	this.$element.find('#rigidBody-container-'+object.ID).find('.rigidBody-particles-container').append($particleContainer);
 	return $particleContainer;
 };
 
@@ -109,16 +144,6 @@ Inspector.prototype.initPropertyContainer = function($bodyContainer) {
 		$('<div></div>').addClass('property').append(
 			$('<div></div>').addClass('container-fluid').append(
 				$('<div></div>').addClass('row').append(
-					$('<div></div>').addClass('col-xs-4').append(
-						$('<span></span>').addClass('label').text('Mass')
-					).append(
-						$('<div></div>').addClass('input-group').append(
-							$('<span></span>').addClass('input-group-addon').text('m')
-						).append(
-							$('<input type="text" />').addClass('form-control mass')
-						)
-					)
-				).append(
 					$('<div></div>').addClass('col-xs-4').append(
 						$('<span></span>').addClass('label').text('Volume')
 					).append(
@@ -136,6 +161,16 @@ Inspector.prototype.initPropertyContainer = function($bodyContainer) {
 							$('<span></span>').addClass('input-group-addon').text('ρ')
 						).append(
 							$('<input type="text" />').addClass('form-control density')
+						)
+					)
+				).append(
+					$('<div></div>').addClass('col-xs-4').append(
+						$('<span></span>').addClass('label').text('Mass')
+					).append(
+						$('<div></div>').addClass('input-group').append(
+							$('<span></span>').addClass('input-group-addon').text('m')
+						).append(
+							$('<input type="text" />').addClass('form-control mass')
 						)
 					)
 				)
@@ -437,7 +472,7 @@ Inspector.prototype.refresh = function(objects){
 			existedParticleIDs.push(particle.ID);
 			var $particleContainer = $bodyContainer.find('#particle-container-' + particle.ID);
 			if ($particleContainer.length === 0) {
-				$particleContainer = this.addParticleContainer(particle.ID, object.ID);
+				$particleContainer = this.addParticleContainer(particle, object);
 			}
 			this.updateParticleValues(particle, $particleContainer);
 		}
@@ -466,14 +501,16 @@ Inspector.prototype.refresh = function(objects){
 };
 
 Inspector.prototype.updateBodyValues = function(object, $bodyContainer) {
+	$bodyContainer = $bodyContainer.find('.rigidBody-properties-container');
+	
 	this.write($bodyContainer, 'mass', object.getMass());
 	this.write($bodyContainer, 'volume', object.getVolume());
 	this.write($bodyContainer, 'density', object.getDensity(), true);
 	
 	var objectPosition = object.getPosition();
 	this.write($bodyContainer, 'position-x', objectPosition[0]);
-	this.write($bodyContainer, 'position-y', objectPosition[0]);
-	this.write($bodyContainer, 'position-z', objectPosition[0]);
+	this.write($bodyContainer, 'position-y', objectPosition[1]);
+	this.write($bodyContainer, 'position-z', objectPosition[2]);
 	
 	var objectOrientation = object.getOrientation();
 	this.write($bodyContainer, 'orientation-i', objectOrientation.v[0]);
@@ -514,17 +551,22 @@ Inspector.prototype.updateBodyValues = function(object, $bodyContainer) {
 };
 
 Inspector.prototype.updateParticleValues = function(particle, $particleContainer) {
+	this.write($particleContainer, 'radius', particle.getRadius());
+	this.write($particleContainer, 'mass', particle.getMass());
+	this.write($particleContainer, 'volume', particle.getVolume());
+	if (!$particleContainer.find('input.density').hasClass('active')) {
+		this.write($particleContainer, 'density', particle.getDensity(), true);
+	}
+	
 	var particlePosition = particle.getPosition();
-	$particleContainer.find('input.position-x').val(particlePosition[0]);
-	$particleContainer.find('input.position-y').val(particlePosition[1]);
-	$particleContainer.find('input.position-z').val(particlePosition[2]);
-	$particleContainer.find('input.radius').val(particle.getRadius());
-	$particleContainer.find('input.mass').val(particle.getMass());
+	this.write($particleContainer, 'position-x', particlePosition[0]);
+	this.write($particleContainer, 'position-y', particlePosition[1]);
+	this.write($particleContainer, 'position-z', particlePosition[2]);
 };
 
 Inspector.prototype.write = function($bodyContainer, inputClass, value, noRound) {
 	if (!(noRound)) {
 		value = Math.round(value * 1000) / 1000;
 	}
-	$bodyContainer.find('.rigidBody-properties-container').find('input.'+inputClass).val(value);
+	$bodyContainer.find('input.'+inputClass).val(value);
 };

@@ -188,7 +188,7 @@ RB.prototype.getCrossMatrix = function (vec) {
 	return vecx;
 };
 RB.prototype.getDensity = function() {
-	return Particle.DENSITY;
+	return this.getMass() / this.getVolume();
 };
 RB.prototype.getForce = function () {
 	return this.force;
@@ -228,7 +228,11 @@ RB.prototype.getVelocity = function () {
 	return this.v;
 };
 RB.prototype.getVolume = function() {
-	return this.getMass() / this.getDensity();
+	var volume = 0;
+	for (var i in this.particles) {
+		volume += this.particles[i].getVolume();
+	}
+	return volume;
 };
 
 /**
