@@ -110,7 +110,7 @@ Particle.prototype.isInside = function (x, y, z) {
 Particle.prototype.applyForce = function(force) {
 	// Applies force on particle
 	numeric.addeq(this.rb.force, force);
-	numeric.addeq(this.rb.torque, numeric.dot(this.getCrossMatrix(numeric.sub(this.rb.x, this.getPosition())), force));
+	numeric.addeq(this.rb.torque, numeric.dot(this.getCrossMatrix(numeric.sub(this.getPosition(), this.rb.x)), force));
 };
 
 /**

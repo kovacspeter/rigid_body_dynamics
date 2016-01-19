@@ -60,6 +60,10 @@ Canvas.prototype.crateRigidBody = function (evt) {
 	var rb = new RB(particle);
 
 	var overlaping = [];
+	if (this.objects.length == 1) {
+		overlaping.push(this.objects[0]);
+	}
+	/*
 	// If bodies are overlaping after creation merge them into one RB
 	for (var o in this.objects) {
 		if (this.objects[o].isOverlap(rb)) {
@@ -69,7 +73,8 @@ Canvas.prototype.crateRigidBody = function (evt) {
 	if (overlaping.length > 0) {
 		rb.join(overlaping);
 	}
-
+	*/
+	rb.join(overlaping);
 	// Delete merged bodies
 	var new_objects = [];
 	for (o in this.objects) {
